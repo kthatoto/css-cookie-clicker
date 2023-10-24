@@ -1,5 +1,5 @@
 :root {
-  --left: 300px;
+  --left: 500px;
 }
 
 body {
@@ -13,7 +13,7 @@ body {
   border-radius: 50px;
   position: relative;
   background-color: chocolate;
-  counter-reset: total 0;
+  counter-reset: cookies 0;
 }
 .cookie > input.increment {
   width: 100%;
@@ -40,7 +40,7 @@ body {
   left: var(--left);
 }
 .cookie > input.increment:checked {
-  counter-increment: total 1;
+  counter-increment: cookies 1;
 }
 
 .shop {
@@ -49,11 +49,20 @@ body {
   left: 200px;
   width: 200px;
   border: 1px dotted black;
+  padding: 10px;
 }
 .shop > .items {
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.shop > .items button {
+.shop > .items > div > input {
+  position: absolute;
+  left: var(--left);
+  appearance: none;
+}
+.shop > .items > div > button {
   width: 100%;
   background-color: gray;
   cursor: not-allowed;
@@ -62,7 +71,7 @@ body {
   position: relative;
   height: 30px;
 }
-.shop > .items button > label {
+.shop > .items > div > button > label {
   display: block;
   width: 100%;
   height: 100%;
@@ -71,28 +80,54 @@ body {
   left: var(--left);
   cursor: pointer;
 }
+.shop > .items > div > button > span::after {
+  content: "購入";
+}
+.shop > .items > div > input:checked + button > span::after {
+  content: "購入済み";
+}
+.shop > .items > div > input:checked + button > label {
+  left: var(--left) !important;
+}
 
 .result::after {
-  content: "クッキー：" counter(total) "枚";
+  content: "クッキー：" counter(cookies) "枚";
 }
 
 /* item1: price 5 */
 .cookie >
-  input.increment:checked +
-  input.increment:checked +
-  input.increment:checked +
-  input.increment:checked +
-  input.increment:checked ~
-  .shop > .items > .item1 label {
-  top: 0;
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked + input.increment:checked ~
+  .shop > .items > .item1 > button > label {
   left: 0;
 }
 .cookie >
-  input.increment:checked +
-  input.increment:checked +
-  input.increment:checked +
-  input.increment:checked +
-  input.increment:checked ~
-  .shop > .items > .item1 button {
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked + input.increment:checked ~
+  .shop > .items > .item1 > button {
   background-color: skyblue;
+}
+#item1:checked {
+  counter-increment: cookies -5;
+}
+
+/* item2: price 10 */
+.cookie >
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked ~
+  .shop > .items > .item2 > button > label {
+  left: 0;
+}
+.cookie >
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked + input.increment:checked + input.increment:checked +
+  input.increment:checked ~
+  .shop > .items > .item2 > button {
+  background-color: skyblue;
+}
+#item2:checked {
+  counter-increment: cookies -10;
 }
