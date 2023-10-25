@@ -3,68 +3,22 @@ html
     link(rel="stylesheet", href="./style.css")
   body
     .cookie
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
-      input.increment(type="checkbox")
+      each _ in Array(30)
+        input.increment(type="checkbox")
+
+      input#item1(type="checkbox")
+      input#item2(type="checkbox")
+
       .shop
         div 商店
         .items
           .item1
             span Special Cookie 1：5枚
-            input#item1(type="checkbox")
             button
               span
               label(for="item1")
           .item2
             span Special Cookie 2：10枚
-            input#item2(type="checkbox")
             button
               span
               label(for="item2")
