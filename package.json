@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "devDependencies": {
-    "pug-cli": "^1.0.0-alpha6"
+    "pug-cli": "^1.0.0-alpha6",
+    "sass": "^1.69.4"
   },
   "scripts": {
-    "pug": "pug ."
+    "build": "yarn pug && yarn sass",
+    "pug": "pug src/index.pug --out build",
+    "sass": "sass src/style.scss build/style.css"
   }
 }
