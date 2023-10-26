@@ -145,10 +145,10 @@ body {
         $selector: $selector + "input#item" + map-get($other-map, index);
         @if binary-hit($i, $j) {
           // input#item1:checked +
-          $selector: $selector + ":checked + ";
+          $selector: $selector + ":checked ~ ";
         } @else {
           // input#item1:not(:checked) +
-          $selector: $selector + ":not(:checked) + ";
+          $selector: $selector + ":not(:checked) ~ ";
         }
       }
       $selector: $selector + "#shop > .items > .item" + $index + " > button";
