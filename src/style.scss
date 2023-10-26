@@ -181,8 +181,8 @@ body {
   }
 }
 
-$item1: (index: 1, name: "Special Cookie 1", price: 1);
-$item2: (index: 2, name: "Special Cookie 2", price: 2);
-$item3: (index: 3, name: "Special Cookie 3", price: 3);
-$item4: (index: 4, name: "Special Cookie 4", price: 4);
+$item1: (index: 1, name: "Special Cookie 1", price: 5);
+$item2: (index: 2, name: "Special Cookie 2", price: 10);
+$item3: (index: 3, name: "Special Cookie 3", price: 10);
+$item4: (index: 4, name: "Special Cookie 4", price: 15);
 @include shop-items(($item1, $item2, $item3, $item4));
