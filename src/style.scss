@@ -1,3 +1,5 @@
+@use "sass:math";
+
 :root {
   --left: 500px;
 }
@@ -87,39 +89,100 @@ body {
   }
 }
 
-@mixin shop-item($index, $item-name, $price) {
-  #shop > .items > .item#{$index} > span::after {
-    content: $item-name + "：" + $price + "枚"
+@function pow($base, $exponents) {
+  $raised: 1;
+  @for $i from 1 through $exponents {
+    $raised: $raised * $base;
   }
+  @return $raised;
+}
+@function binary-hit($n, $digit) {
+  $binary: $n;
+  @for $i from 1 to $digit {
+    $binary: math.floor(math.div($binary, 2));
+  }
+  @return $binary % 2 == 1;
+}
 
-  $selector: ".cookie > ";
-  @for $i from 1 through $price {
-    @if $i < $price {
-      $selector: $selector + "input.increment:checked + ";
-    } @else {
-      $selector: $selector + "input.increment:checked ~";
+@mixin shop-items($map-array) {
+  @each $map in $map-array {
+    $index: map-get($map, index);
+    $item-name: map-get($map, name);
+    $price: map-get($map, price);
+
+    #shop > .items > .item#{$index} > span::after {
+      content: $item-name + "：" + $price + "枚"
     }
-  }
-  #{$selector} #shop > .items > .item#{$index} > button {
-    background-color: skyblue;
-    > label {
-      left: 0;
+
+    $other-map-array: ();
+    @each $other-map in $map-array {
+      @if map-get($other-map, index) != $index {
+        $other-map-array: append($other-map-array, $other-map);
+      }
     }
-  }
-  #item#{$index}:checked {
-    counter-increment: cookies -#{$price};
-    ~ #shop > .items > .item#{$index} {
-      > button {
-        > span::after {
-          content: "済み";
+
+    $buyable-selectors: "";
+    $loop-count: pow(2, length($other-map-array));
+    @for $i from 0 to $loop-count {
+      $required: $price;
+      @for $j from 1 through length($other-map-array) {
+        @if binary-hit($i, $j) {
+          $other-map: nth($other-map-array, $j);
+          $required: $required + map-get($other-map, price);
         }
-        > label {
-          left: var(--left);
+      }
+      $selector: "";
+      @for $j from 1 through $required {
+        @if $j < $required {
+          $selector: $selector + "input.increment:checked + ";
+        } @else {
+          $selector: $selector + "input.increment:checked ~ ";
+        }
+      }
+      @for $j from 1 through length($other-map-array) {
+        $other-map: nth($other-map-array, $j);
+        // input#item1
+        $selector: $selector + "input#item" + map-get($other-map, index);
+        @if binary-hit($i, $j) {
+          // input#item1:checked +
+          $selector: $selector + ":checked + ";
+        } @else {
+          // input#item1:not(:checked) +
+          $selector: $selector + ":not(:checked) + ";
+        }
+      }
+      $selector: $selector + "#shop > .items > .item" + $index + " > button";
+      @if $i < $loop-count - 1 {
+        $selector: $selector + ", ";
+      }
+      $buyable-selectors: $buyable-selectors + $selector;
+    }
+
+    #{$buyable-selectors} {
+      background-color: skyblue;
+      > label {
+        left: 0;
+      }
+    }
+
+    #item#{$index}:checked {
+      counter-increment: cookies -#{$price};
+      ~ #shop > .items > .item#{$index} {
+        > button {
+          > span::after {
+            content: "済み";
+          }
+          > label {
+            left: var(--left);
+          }
         }
       }
     }
   }
 }
 
-@include shop-item(1, "Special Cookie 1", 5);
-@include shop-item(2, "Special Cookie 2", 10);
+$item1: (index: 1, name: "Special Cookie 1", price: 1);
+$item2: (index: 2, name: "Special Cookie 2", price: 2);
+$item3: (index: 3, name: "Special Cookie 3", price: 3);
+$item4: (index: 4, name: "Special Cookie 4", price: 4);
+@include shop-items(($item1, $item2, $item3, $item4));
