@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "yarn pug && yarn sass",
-    "pug": "pug src/index.pug --out build",
-    "sass": "sass src/style.scss build/style.css"
+    "pug": "pug src/index.pug --out docs",
+    "sass": "sass src/style.scss docs/style.css"
   }
 }
