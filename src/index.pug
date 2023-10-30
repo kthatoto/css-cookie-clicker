@@ -6,32 +6,18 @@ html
       each _ in Array(100)
         input.increment(type="checkbox")
 
-      input#item1(type="checkbox")
-      input#item2(type="checkbox")
-      input#item3(type="checkbox")
-      input#item4(type="checkbox")
+      - var item_number = 4
+
+      each _, index in Array(item_number)
+        input(id="item" + (index + 1) type="checkbox")
 
       #shop
         div 商店
         .items
-          .item1
-            span
-            button
-              span 購入
-              label(for="item1")
-          .item2
-            span
-            button
-              span 購入
-              label(for="item2")
-          .item3
-            span
-            button
-              span 購入
-              label(for="item3")
-          .item4
-            span
-            button
-              span 購入
-              label(for="item4")
+          each _, index in Array(item_number)
+            div(class="item" + (index + 1))
+              span
+              button
+                span 購入
+                label(for="item" + (index + 1))
     .result
