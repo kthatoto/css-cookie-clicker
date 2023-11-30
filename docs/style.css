@@ -22,6 +22,8 @@ body {
 .cookie .icon {
   align-self: center;
   font-size: 100px;
+  width: 100%;
+  height: 100%;
 }
 .cookie > input {
   margin: 0;
