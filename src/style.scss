@@ -15,11 +15,16 @@ body {
 .cookie {
   width: 100px;
   height: 100px;
-  border: 1px solid black;
   border-radius: 50px;
   position: relative;
-  background-color: chocolate;
   counter-reset: cookies 0;
+  display: flex;
+
+  .icon {
+    align-self: center;
+    font-size: 100px;
+  }
+
   > input {
     margin: 0;
     position: absolute;
