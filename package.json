@@ -1,6 +1,7 @@
 {
   "name": "html-css-cookie-clicker",
   "version": "1.0.0",
+  "license": "UNLICENSED",
   "description": "",
   "devDependencies": {
     "pug-cli": "^1.0.0-alpha6",
