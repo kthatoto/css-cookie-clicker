@@ -7,16 +7,23 @@ body {
   padding-top: 64px;
   background-color: #cccccc;
 }
+h1 {
+  text-align: center;
+}
+
+.result {
+  font-size: 24px;
+  width: 400px;
+  margin: auto;
+}
 
 .result::after {
   content: "クッキー：" counter(cookies) "枚";
 }
 
-
 input:checked {
   counter-increment: cookies 1;
 }
-
 
 #main {
   position: relative;
@@ -97,11 +104,6 @@ input:checked {
       }
     }
   }
-}
-
-.result {
-  width: 400px;
-  margin: auto;
 }
 
 @function pow($base, $exponents) {
