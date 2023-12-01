@@ -13,10 +13,10 @@ body {
   content: "クッキー：" counter(cookies) "枚";
 }
 
-.cookie {
-  width: var(--cookie-size);
-  height: var(--cooike-size);
-  border-radius: 50%;
+.main {
+  // width: var(--cookie-size);
+  // height: var(--cooike-size);
+  // border-radius: 50%;
   position: relative;
   counter-reset: cookies 0;
   display: flex;
@@ -37,8 +37,8 @@ body {
     border: none;
   }
   > input.increment {
-    width: 100%;
-    height: 100%;
+    width: var(--cookie-size);
+    height: var(--cookie-size);
     inset: 0;
     border-radius: 50%;
     cursor: pointer;
