@@ -21,6 +21,20 @@ h1 {
   content: "クッキー：" counter(cookies) "枚";
 }
 
+.game-clear {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  line-height: 100vh;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 60px;
+  font-weight: bold;
+  display: none;
+}
+
 input:checked {
   counter-increment: cookies 1;
 }
