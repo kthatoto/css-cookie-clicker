@@ -11,17 +11,17 @@ h1 {
   text-align: center;
 }
 
-.result {
+#result {
   font-size: 24px;
   width: 400px;
   margin: auto;
 }
 
-.result::after {
+#result::after {
   content: "クッキー：" counter(cookies) "枚";
 }
 
-.game-clear {
+#game-clear {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -87,7 +87,7 @@ input:checked {
   width: 200px;
   border: 1px dotted black;
   padding: 10px;
-  > .items {
+  > #items {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
@@ -136,12 +136,13 @@ input:checked {
 }
 
 @mixin shop-items($map-array) {
+  $game-clear-condition: "";
   @each $map in $map-array {
     $index: map-get($map, index);
     $item-name: map-get($map, name);
     $price: map-get($map, price);
 
-    #shop > .items > .item#{$index} > span::after {
+    #shop > #items > .item#{$index} > span::after {
       content: $item-name + "：" + $price + "枚"
     }
 
@@ -182,7 +183,7 @@ input:checked {
           $selector: $selector + ":not(:checked) ~ ";
         }
       }
-      $selector: $selector + "#shop > .items > .item" + $index + " > button";
+      $selector: $selector + "#shop > #items > .item" + $index + " > button";
       @if $i < $loop-count - 1 {
         $selector: $selector + ", ";
       }
@@ -198,7 +199,7 @@ input:checked {
 
     #item#{$index}:checked {
       counter-increment: cookies -#{$price};
-      ~ #shop > .items > .item#{$index} {
+      ~ #shop > #items > .item#{$index} {
         > button {
           > span::after {
             content: "済み";
@@ -209,6 +210,11 @@ input:checked {
         }
       }
     }
+    $game-clear-condition: $game-clear-condition + "#item" + $index + ":checked ~ ";
+  }
+
+  #{$game-clear-condition} #game-clear {
+    display: block;
   }
 }
 

@@ -15,12 +15,12 @@ html
 
       #shop
         div ショップ
-        .items
+        #items
           each _, index in Array(item_number)
             div(class="item" + (index + 1))
               span
               button
                 span 購入
                 label(for="item" + (index + 1))
-    .result
-    .game-clear クリア🎉
+      #game-clear クリア🎉
+    #result
