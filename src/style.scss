@@ -13,15 +13,14 @@ body {
   content: "クッキー：" counter(cookies) "枚";
 }
 
-.main {
-  // width: var(--cookie-size);
-  // height: var(--cooike-size);
-  // border-radius: 50%;
+#main {
   position: relative;
   counter-reset: cookies 0;
+  width: fit-content;
   display: flex;
+  margin: auto;
 
-  .icon {
+  #cookie {
     align-self: center;
     font-size: var(--cookie-size);
     line-height: var(--cookie-size);
@@ -59,9 +58,6 @@ body {
 }
 
 #shop {
-  position: absolute;
-  top: 0;
-  left: 200px;
   width: 200px;
   border: 1px dotted black;
   padding: 10px;
