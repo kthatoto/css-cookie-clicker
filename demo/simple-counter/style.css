@@ -75,3 +75,22 @@ input {
 .container4 input:checked ~ input:checked ~ input:checked ~ input:checked ~ input:checked ~ .result::after {
   content: "Five";
 }
+
+.container4 .result::after {
+  content: "Zero...";
+}
+.container4 div:has(input:checked) ~ .result::after {
+  content: "One";
+}
+.container4 div:has(input:checked ~ input:checked) ~ .result::after {
+  content: "Two";
+}
+.container4 div:has(input:checked ~ input:checked ~ input:checked) ~ .result::after {
+  content: "Three";
+}
+.container4 div:has(input:checked ~ input:checked ~ input:checked ~ input:checked) ~ .result::after {
+  content: "Four";
+}
+.container4 div:has(input:checked ~ input:checked ~ input:checked ~ input:checked ~ input:checked) ~ .result::after {
+  content: "Five";
+}
