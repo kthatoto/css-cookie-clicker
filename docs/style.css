@@ -1,5 +1,6 @@
 @charset "UTF-8";
 body {
+  padding-top: 64px;
   background-color: #cccccc;
 }
 
@@ -86,6 +87,11 @@ input:checked {
   top: 0;
   left: 500px;
   cursor: pointer;
+}
+
+.result {
+  width: 400px;
+  margin: auto;
 }
 
 #shop > .items > .item1 > span::after {

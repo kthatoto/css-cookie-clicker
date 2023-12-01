@@ -4,6 +4,7 @@ $disappear: 500px;
 $cookie-size: 200px;
 
 body {
+  padding-top: 64px;
   background-color: #cccccc;
 }
 
@@ -96,6 +97,11 @@ input:checked {
       }
     }
   }
+}
+
+.result {
+  width: 400px;
+  margin: auto;
 }
 
 @function pow($base, $exponents) {
