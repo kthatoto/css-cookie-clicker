@@ -1,9 +1,4 @@
 @charset "UTF-8";
-:root {
-  --left: 500px;
-  --cookie-size: 200px;
-}
-
 body {
   background-color: #cccccc;
 }
@@ -12,31 +7,35 @@ body {
   content: "クッキー：" counter(cookies) "枚";
 }
 
+input:checked {
+  counter-increment: cookies 1;
+}
+
 #main {
   position: relative;
   counter-reset: cookies 0;
   width: fit-content;
   display: flex;
   margin: auto;
+  align-items: center;
 }
 #main #cookie {
-  align-self: center;
-  font-size: var(--cookie-size);
-  line-height: var(--cookie-size);
-  width: 100%;
+  font-size: 200px;
+  line-height: 200px;
+  width: 200px;
   height: 100%;
 }
 #main > input {
   margin: 0;
   position: absolute;
-  left: var(--left);
+  left: 500px;
   appearance: none;
   border: none;
 }
 #main > input.increment {
-  width: var(--cookie-size);
-  height: var(--cookie-size);
-  inset: 0;
+  width: 200px;
+  height: 200px;
+  inset: auto 0;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -45,13 +44,13 @@ body {
 }
 #main > input.increment:checked {
   counter-increment: cookies 1;
-  left: var(--left);
+  left: 500px;
 }
 #main > input.increment:checked + input.increment:not(:checked) {
   left: 0;
 }
 #main > input.increment:checked + input.increment:not(:checked) + input.increment:not(:checked) {
-  left: var(--left);
+  left: 500px;
 }
 
 #shop {
@@ -67,7 +66,7 @@ body {
 }
 #shop > .items > div > input {
   position: absolute;
-  left: var(--left);
+  left: 500px;
   appearance: none;
 }
 #shop > .items > div > button {
@@ -85,7 +84,7 @@ body {
   height: 100%;
   position: absolute;
   top: 0;
-  left: var(--left);
+  left: 500px;
   cursor: pointer;
 }
 
@@ -107,7 +106,7 @@ input.increment:checked + input.increment:checked + input.increment:checked + in
   content: "済み";
 }
 #item1:checked ~ #shop > .items > .item1 > button > label {
-  left: var(--left);
+  left: 500px;
 }
 
 #shop > .items > .item2 > span::after {
@@ -128,7 +127,7 @@ input.increment:checked + input.increment:checked + input.increment:checked + in
   content: "済み";
 }
 #item2:checked ~ #shop > .items > .item2 > button > label {
-  left: var(--left);
+  left: 500px;
 }
 
 #shop > .items > .item3 > span::after {
@@ -149,7 +148,7 @@ input.increment:checked + input.increment:checked + input.increment:checked + in
   content: "済み";
 }
 #item3:checked ~ #shop > .items > .item3 > button > label {
-  left: var(--left);
+  left: 500px;
 }
 
 #shop > .items > .item4 > span::after {
@@ -170,7 +169,7 @@ input.increment:checked + input.increment:checked + input.increment:checked + in
   content: "済み";
 }
 #item4:checked ~ #shop > .items > .item4 > button > label {
-  left: var(--left);
+  left: 500px;
 }
 
 /*# sourceMappingURL=style.css.map */

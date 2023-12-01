@@ -1,9 +1,7 @@
 @use "sass:math";
 
-:root {
-  --left: 500px;
-  --cookie-size: 200px;
-}
+$disappear: 500px;
+$cookie-size: 200px;
 
 body {
   background-color: #cccccc;
@@ -13,32 +11,38 @@ body {
   content: "クッキー：" counter(cookies) "枚";
 }
 
+
+input:checked {
+  counter-increment: cookies 1;
+}
+
+
 #main {
   position: relative;
   counter-reset: cookies 0;
   width: fit-content;
   display: flex;
   margin: auto;
+  align-items: center;
 
   #cookie {
-    align-self: center;
-    font-size: var(--cookie-size);
-    line-height: var(--cookie-size);
-    width: 100%;
+    font-size: $cookie-size;
+    line-height: $cookie-size;
+    width: $cookie-size;
     height: 100%;
   }
 
   > input {
     margin: 0;
     position: absolute;
-    left: var(--left);
+    left: $disappear;
     appearance: none;
     border: none;
   }
   > input.increment {
-    width: var(--cookie-size);
-    height: var(--cookie-size);
-    inset: 0;
+    width: $cookie-size;
+    height: $cookie-size;
+    inset: auto 0;
     border-radius: 50%;
     cursor: pointer;
     &:first-child {
@@ -46,11 +50,11 @@ body {
     }
     &:checked {
       counter-increment: cookies 1;
-      left: var(--left);
+      left: $disappear;
       + input.increment:not(:checked) {
         left: 0;
         + input.increment:not(:checked) {
-          left: var(--left);
+          left: $disappear;
         }
       }
     }
@@ -69,7 +73,7 @@ body {
     > div {
       > input {
         position: absolute;
-        left: var(--left);
+        left: $disappear;
         appearance: none;
       }
       > button {
@@ -86,7 +90,7 @@ body {
           height: 100%;
           position: absolute;
           top: 0;
-          left: var(--left);
+          left: $disappear;
           cursor: pointer;
         }
       }
@@ -178,7 +182,7 @@ body {
             content: "済み";
           }
           > label {
-            left: var(--left);
+            left: $disappear;
           }
         }
       }
