@@ -1,26 +1,33 @@
 html
   head
     link(rel="stylesheet", href="./style.css")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
   body
-    h1 CSS Cookie Clicker
-    #main
-      span#cookie 🍪
-      each _ in Array(100)
-        input.increment(type="checkbox")
+    .container
+      h1 CSS Cookie Clicker
+      p.subtitle JavaScript 0行で動いてます
+      #main
+        span#cookie 🍪
+        each _ in Array(100)
+          input.increment(type="checkbox")
 
-      - var item_number = 4
+        - var item_number = 4
 
-      each _, index in Array(item_number)
-        input(id="item" + (index + 1) type="checkbox")
+        each _, index in Array(item_number)
+          input(id="item" + (index + 1) type="checkbox")
 
-      #shop
-        div ショップ
-        #items
-          each _, index in Array(item_number)
-            div(class="item" + (index + 1))
-              span
-              button
-                span 購入
-                label(for="item" + (index + 1))
-      #game-clear クリア🎉
-    #result
+        #shop
+          .shop-title ショップ
+          #items
+            each _, index in Array(item_number)
+              div(class="item" + (index + 1))
+                span.item-info
+                button.buy-btn
+                  span 購入
+                  label(for="item" + (index + 1))
+        #game-clear
+          .clear-content
+            .clear-emoji 🎉
+            .clear-text クリア！
+            .clear-sub CSSだけでCookie Clickerを作りました
+      #result

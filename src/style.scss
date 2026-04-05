@@ -1,40 +1,136 @@
 @use "sass:math";
 
+// ============================
+// Design Tokens
+// ============================
+$cookie-size: 180px;
 $disappear: 500px;
-$cookie-size: 200px;
+$bg-gradient-start: #2c1810;
+$bg-gradient-end: #1a0e08;
+$shop-bg: rgba(255, 255, 255, 0.06);
+$shop-border: rgba(255, 255, 255, 0.1);
+$accent-color: #f4a460;
+$accent-glow: rgba(244, 164, 96, 0.4);
+$buyable-color: #4CAF50;
+$buyable-glow: rgba(76, 175, 80, 0.5);
+$bought-color: #666;
+$text-color: #e8d5c0;
+$counter-color: #ffd700;
+
+// ============================
+// Global
+// ============================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  padding-top: 64px;
-  background-color: #cccccc;
-}
-h1 {
-  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $bg-gradient-start, $bg-gradient-end);
+  color: $text-color;
+  font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+  overflow-x: hidden;
 }
 
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.4em;
+  color: $accent-color;
+  text-shadow: 0 0 30px $accent-glow;
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 32px;
+}
+
+// ============================
+// Counter Display
+// ============================
 #result {
-  font-size: 24px;
-  width: 400px;
-  margin: auto;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: $counter-color;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  padding: 16px;
+  margin-top: 16px;
+  transition: transform 0.1s ease;
 }
 
 #result::after {
-  content: "クッキー：" counter(cookies) "枚";
+  content: "🍪 " counter(cookies) " 枚";
 }
 
+// ============================
+// Game Clear Overlay
+// ============================
 #game-clear {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100vh;
-  line-height: 100vh;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-size: 60px;
-  font-weight: bold;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   display: none;
+  z-index: 100;
+
+  .clear-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    animation: clearBounce 0.6s ease-out;
+  }
+
+  .clear-emoji {
+    font-size: 80px;
+    animation: celebrationSpin 1s ease-out;
+  }
+
+  .clear-text {
+    font-size: 64px;
+    font-weight: bold;
+    color: $counter-color;
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+    margin-top: 16px;
+  }
+
+  .clear-sub {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 12px;
+  }
 }
 
+@keyframes clearBounce {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes celebrationSpin {
+  0% { transform: rotate(0deg) scale(0); }
+  50% { transform: rotate(180deg) scale(1.3); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+// ============================
+// Cookie & Checkbox Logic
+// ============================
 input:checked {
   counter-increment: cookies 1;
 }
@@ -42,37 +138,51 @@ input:checked {
 #main {
   position: relative;
   counter-reset: cookies 0;
-  width: fit-content;
   display: flex;
-  margin: auto;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
 
   #cookie {
     font-size: $cookie-size;
     line-height: $cookie-size;
     width: $cookie-size;
     height: 100%;
+    display: block;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+    transition: transform 0.08s ease;
+    user-select: none;
   }
 
+  // Hide all checkboxes off-screen
   > input {
     margin: 0;
     position: absolute;
     left: $disappear;
     appearance: none;
     border: none;
+    outline: none;
   }
+
+  // Increment checkboxes: stacked on top of the cookie
   > input.increment {
     width: $cookie-size;
     height: $cookie-size;
     inset: auto 0;
     border-radius: 50%;
     cursor: pointer;
+    z-index: 10;
+
+    // First unchecked checkbox sits on top of cookie
     &:first-child {
       left: 0;
     }
+
+    // When checked: fly off-screen, next unchecked takes position
     &:checked {
       counter-increment: cookies 1;
       left: $disappear;
+
       + input.increment:not(:checked) {
         left: 0;
         + input.increment:not(:checked) {
@@ -80,32 +190,72 @@ input:checked {
         }
       }
     }
+
+    // Click feedback: pulse the cookie via general sibling
+    &:active ~ #cookie {
+      transform: scale(0.85);
+    }
+
+    &:hover ~ #cookie {
+      transform: scale(0.95);
+    }
   }
 }
 
+// ============================
+// Shop
+// ============================
 #shop {
-  width: 200px;
-  border: 1px dotted black;
-  padding: 10px;
-  > #items {
-    margin-top: 10px;
+  width: 280px;
+  background: $shop-bg;
+  border: 1px solid $shop-border;
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+
+  .shop-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: $accent-color;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $shop-border;
+    letter-spacing: 2px;
+  }
+
+  #items {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+
     > div {
-      > input {
-        position: absolute;
-        left: $disappear;
-        appearance: none;
+      .item-info {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 6px;
       }
-      > button {
+
+      .buy-btn {
         width: 100%;
-        background-color: gray;
-        cursor: not-allowed;
+        background: $bought-color;
+        color: white;
         border: none;
+        border-radius: 8px;
         padding: 0;
         position: relative;
-        height: 30px;
+        height: 36px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: not-allowed;
+        transition: all 0.3s ease;
+        overflow: hidden;
+
+        > span {
+          position: relative;
+          z-index: 1;
+        }
+
         > label {
           display: block;
           width: 100%;
@@ -114,11 +264,16 @@ input:checked {
           top: 0;
           left: $disappear;
           cursor: pointer;
+          z-index: 2;
         }
       }
     }
   }
 }
+
+// ============================
+// SCSS Shop Logic
+// ============================
 
 @function pow($base, $exponents) {
   $raised: 1;
@@ -127,6 +282,7 @@ input:checked {
   }
   @return $raised;
 }
+
 @function binary-hit($n, $digit) {
   $binary: $n;
   @for $i from 1 to $digit {
@@ -141,9 +297,11 @@ input:checked {
     $index: map-get($map, index);
     $item-name: map-get($map, name);
     $price: map-get($map, price);
+    $icon: map-get($map, icon);
 
-    #shop > #items > .item#{$index} > span::after {
-      content: $item-name + "：" + $price + "枚"
+    // Item info display
+    #shop > #items > .item#{$index} > .item-info::after {
+      content: $icon + " " + $item-name + "  —  " + $price + "枚";
     }
 
     $other-map-array: ();
@@ -153,6 +311,7 @@ input:checked {
       }
     }
 
+    // Generate buyable selectors for all combinations
     $buyable-selectors: "";
     $loop-count: pow(2, length($other-map-array));
     @for $i from 0 to $loop-count {
@@ -173,36 +332,51 @@ input:checked {
       }
       @for $j from 1 through length($other-map-array) {
         $other-map: nth($other-map-array, $j);
-        // input#item1
         $selector: $selector + "input#item" + map-get($other-map, index);
         @if binary-hit($i, $j) {
-          // input#item1:checked +
           $selector: $selector + ":checked ~ ";
         } @else {
-          // input#item1:not(:checked) +
           $selector: $selector + ":not(:checked) ~ ";
         }
       }
-      $selector: $selector + "#shop > #items > .item" + $index + " > button";
+      $selector: $selector + "#shop > #items > .item" + $index + " > .buy-btn";
       @if $i < $loop-count - 1 {
         $selector: $selector + ", ";
       }
       $buyable-selectors: $buyable-selectors + $selector;
     }
 
+    // Buyable state: green button with glow
     #{$buyable-selectors} {
-      background-color: skyblue;
+      background: $buyable-color;
+      cursor: pointer;
+      box-shadow: 0 0 16px $buyable-glow, inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        background: lighten($buyable-color, 8%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px $buyable-glow;
+      }
+
       > label {
         left: 0;
       }
     }
 
+    // Bought state
     #item#{$index}:checked {
       counter-increment: cookies -#{$price};
       ~ #shop > #items > .item#{$index} {
-        > button {
+        > .item-info {
+          opacity: 0.4;
+          text-decoration: line-through;
+        }
+        > .buy-btn {
+          background: rgba(76, 175, 80, 0.2);
+          border: 1px solid rgba(76, 175, 80, 0.3);
+
           > span::after {
-            content: "済み";
+            content: " ✓";
           }
           > label {
             left: $disappear;
@@ -210,16 +384,22 @@ input:checked {
         }
       }
     }
+
     $game-clear-condition: $game-clear-condition + "#item" + $index + ":checked ~ ";
   }
 
+  // Game clear: all items purchased
   #{$game-clear-condition} #game-clear {
     display: block;
   }
 }
 
-$item1: (index: 1, name: "Special Cookie 1", price: 5);
-$item2: (index: 2, name: "Special Cookie 2", price: 10);
-$item3: (index: 3, name: "Special Cookie 3", price: 10);
-$item4: (index: 4, name: "Special Cookie 4", price: 15);
+// ============================
+// Item Definitions
+// ============================
+$item1: (index: 1, name: "Golden Cookie", price: 5, icon: "✨");
+$item2: (index: 2, name: "Cookie Farm", price: 10, icon: "🌾");
+$item3: (index: 3, name: "Cookie Factory", price: 10, icon: "🏭");
+$item4: (index: 4, name: "Cookie Portal", price: 15, icon: "🌀");
+
 @include shop-items(($item1, $item2, $item3, $item4));
