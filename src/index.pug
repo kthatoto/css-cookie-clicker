@@ -7,7 +7,7 @@ mixin click-group(rate)
     each _, index in Array(click_limit)
       input.increment(
         type="checkbox"
-        aria-label=rate + " cookie per click: " + (index + 1)
+        aria-label=rate + (rate === 1 ? " cookie" : " cookies") + " per click: " + (index + 1)
       )
 
 mixin shop-item(index)
@@ -21,7 +21,8 @@ mixin shop-item(index)
       )
       span 購入
 
-html
+doctype html
+html(lang="ja")
   head
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
