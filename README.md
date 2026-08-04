@@ -1,3 +1,4 @@
 # css-cookie-clicker
-* https://speakerdeck.com/kthatoto/htmltocsstaketecookie-clicker-likenakemuwozuo-ru
-* https://kthatoto.github.io/css-cookie-clicker
+- [元の発表資料](https://speakerdeck.com/kthatoto/htmltocsstaketecookie-clicker-likenakemuwozuo-ru)
+- [CSS Cookie Clicker](https://kthatoto.github.io/css-cookie-clicker/)
+- [HTML版の発表資料](https://kthatoto.github.io/css-cookie-clicker/presentation.html)
