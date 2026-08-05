@@ -85,11 +85,6 @@ h1 {
   flex-direction: column;
   gap: 10px;
 }
-#shop > #items > div > input {
-  position: absolute;
-  left: 500px;
-  appearance: none;
-}
 #shop > #items > div > .purchase {
   width: 100%;
   background-color: var(--purchase-background, gray);
