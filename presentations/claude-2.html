@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!--
+  claude-2.html — 技術解剖型プレゼン「3つのレイヤーで見る CSS Cookie Clicker」
+
+  【狙い】
+  時系列のストーリーではなく、常に3枚のパネル
+    ① DOM層   : input[type=checkbox] の checked/unchecked という「実体」
+    ② Counter層: CSS counter が積み上げる cookies の計算式
+    ③ Sass層  : Sassが状態空間を総当たりして生成した静的CSSセレクタ
+  を同時に画面へ置き、「同じ1つの出来事」を3つの窓から見比べる構造にする。
+  クリックという1つの操作が、①→③→②（あるいは③→①）と因果の矢印を
+  跨いで伝播していく様子を、パネル間の矢印インジケーターの点灯で示す。
+
+  【説明順（ステップ）】
+   0  タイトル：3層の紹介
+   1  ①DOM単体：checkboxは「1回分のクリックの記憶」
+   2  ①DOM拡大：100個重ねたスタック構造と「手前から1個ずつ消費」
+   3  ①クリック1〜10回目：rate-1群で10個checked
+   4  ①→③：nth-last-child(10) を含むセレクタが「10個checked」を検出
+   5  ③→②：counter式に「1×10」の項が加わり合計10
+   6  ①item1購入：#item1 がchecked
+   7  ①→③→②：#item1:checked セレクタが発火し、counter式に「-5」が加わり合計5
+   8  ③→①：rateの可視性を決めるSass生成セレクタが発火し、rate-2群が可視化
+   9  ①→③→②：rate-2群での1クリックが+2され合計7。rate-1群の項(1×10)は
+      変化せず残り続けることを明示（過去のクリックの価値は変わらない）
+  10  ③拡大：Sassは「状態空間(購入済み集合×各rateのクリック数)を総当たりして
+      境界にだけセレクタを生成するコンパイラ」であることを表で図解
+  11  まとめ：3層の対応関係の総復習
+
+  【主要アニメーションの意味】
+  - パネル間の矢印（▶/◀）が「点灯」するのは、片方の層の変化がもう片方の層に
+    因果として伝播したことを示す合図であり、常時ループはしない
+    （ステップが変わった瞬間だけ一度だけ明滅する）。
+  - 各層内でのハイライト（背景色の変化）は、そのステップで「新しく変わった値」
+    を示す。すでに確定した過去の値は薄いハイライト（persisted）のままにして、
+    「変わらず効き続けている」ことを視覚的に区別する。
+  - prefers-reduced-motion: reduce の場合はすべてのtransition/animationを
+    ごく短時間・省略に切り替える。
+-->
+<title>3層で見る CSS Cookie Clicker（技術解剖型）</title>
+<style>
+  :root{
+    --bg:#11131b;
+    --panel-bg:#1a1e2b;
+    --panel-bg-dim:#151822;
+    --text:#e8ebf5;
+    --muted:#8891a8;
+    --dom:#3ddc97;
+    --dom-dim:#1f4a3a;
+    --sass:#a988ff;
+    --sass-dim:#3a2f5c;
+    --counter:#ffb454;
+    --counter-dim:#5a4325;
+    --danger:#ff6b6b;
+    --border:#2a3040;
+    --highlight:#fff4c4;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; width:100vw; height:100vh;
+    background:var(--bg); color:var(--text);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI",sans-serif;
+    overflow:hidden;
+  }
+  #app{
+    height:100vh; width:100vw;
+    display:flex; flex-direction:column;
+    padding:clamp(8px,1.6vh,18px) clamp(14px,2.2vw,30px);
+    gap:clamp(6px,1vh,12px);
+  }
+
+  /* ---------- topbar ---------- */
+  #topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    flex:0 0 auto;
+    gap:12px;
+  }
+  #topbar h1{
+    font-size:clamp(13px,1.7vh,17px);
+    margin:0; font-weight:700; color:var(--text); letter-spacing:.02em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  #progress-wrap{
+    flex:1; height:6px; background:#242938; border-radius:4px; overflow:hidden;
+    margin:0 16px;
+  }
+  #progress-bar{
+    height:100%; width:0%; background:linear-gradient(90deg,var(--dom),var(--sass),var(--counter));
+    transition:width .35s ease;
+  }
+  #step-indicator{
+    font-size:clamp(11px,1.4vh,14px); color:var(--muted); white-space:nowrap;
+  }
+
+  /* ---------- stage ---------- */
+  #stage{
+    flex:1 1 auto; min-height:0; position:relative;
+  }
+  .slide{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column;
+    min-height:0;
+  }
+  .slide.active{ display:flex; }
+
+  /* ---------- intro ---------- */
+  #slide-intro{ align-items:center; justify-content:center; text-align:center; gap:clamp(10px,2vh,22px); }
+  #slide-intro .big-title{
+    font-size:clamp(22px,4.2vh,44px); font-weight:800; margin:0;
+    background:linear-gradient(90deg,var(--dom),var(--sass),var(--counter));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  #slide-intro .sub{ font-size:clamp(12px,1.8vh,18px); color:var(--muted); max-width:70ch; margin:0; }
+  #intro-badges{ display:flex; gap:clamp(10px,2vw,26px); margin-top:6px; flex-wrap:wrap; justify-content:center; }
+  .badge{
+    padding:clamp(8px,1.4vh,14px) clamp(14px,2vw,22px);
+    border-radius:10px; font-size:clamp(11px,1.5vh,15px); font-weight:700;
+    border:1px solid var(--border);
+  }
+  .badge.dom{ color:var(--dom); background:var(--dom-dim); }
+  .badge.sass{ color:var(--sass); background:var(--sass-dim); }
+  .badge.counter{ color:var(--counter); background:var(--counter-dim); }
+
+  /* ---------- layers slide ---------- */
+  #slide-layers{ min-height:0; gap:clamp(6px,1vh,10px); }
+  #caption{
+    flex:0 0 auto;
+    font-size:clamp(12px,1.7vh,16px);
+    padding:clamp(6px,1vh,10px) clamp(10px,1.4vw,16px);
+    background:var(--panel-bg); border:1px solid var(--border); border-radius:8px;
+    min-height:2.6em; display:flex; align-items:center;
+  }
+  #caption b{ color:var(--highlight); }
+  #layers-row{
+    flex:1; min-height:0;
+    display:grid;
+    grid-template-columns: 1fr clamp(28px,3vw,44px) 1fr clamp(28px,3vw,44px) 1fr;
+    align-items:stretch;
+    gap:clamp(4px,0.8vh,8px);
+  }
+
+  .panel{
+    min-height:0; display:flex; flex-direction:column;
+    background:var(--panel-bg); border:1.5px solid var(--border); border-radius:10px;
+    padding:clamp(6px,1vh,12px);
+    overflow:hidden;
+    transition:opacity .3s ease, border-color .3s ease;
+  }
+  .panel.dim{ opacity:.35; }
+  .panel h2{
+    margin:0 0 clamp(4px,0.7vh,8px) 0; font-size:clamp(11px,1.4vh,14px);
+    display:flex; align-items:center; gap:6px; flex:0 0 auto;
+  }
+  .panel-dom{ border-color:var(--dom-dim); }
+  .panel-dom h2{ color:var(--dom); }
+  .panel-sass{ border-color:var(--sass-dim); }
+  .panel-sass h2{ color:var(--sass); }
+  .panel-counter{ border-color:var(--counter-dim); }
+  .panel-counter h2{ color:var(--counter); }
+  .panel-body{
+    flex:1; min-height:0; overflow:auto; font-size:clamp(10px,1.3vh,13px);
+    /* 内容が短いステップでもパネル下部が空白だらけにならないよう縦中央寄せ。
+       grid + grid-auto-rows:max-content にすると子が引き伸ばされずに
+       「かたまりごと」中央へ寄る。あふれたときに上端が切れないよう safe center を後勝ちで指定 */
+    display:grid; grid-auto-rows:max-content; gap:clamp(4px,0.8vh,10px);
+    align-content:center;
+    align-content:safe center;
+  }
+
+  .dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  .dot.dom{ background:var(--dom); }
+  .dot.sass{ background:var(--sass); }
+  .dot.counter{ background:var(--counter); }
+
+  /* ---------- arrow flow indicators ---------- */
+  .flow{
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(16px,2.4vh,26px); color:#333a4d;
+  }
+  .flow span{ display:inline-block; transition:color .25s ease, transform .25s ease; }
+  .flow.active span{ color:var(--highlight); }
+  .flow.pulse span{ animation:flowPulse .6s ease; }
+  @keyframes flowPulse{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.6); }
+    100%{ transform:scale(1); }
+  }
+
+  /* ---------- DOM panel content ---------- */
+  .checkbox-demo{ display:flex; align-items:center; justify-content:center; gap:clamp(16px,3vw,40px); }
+  .cb-face{
+    width:clamp(46px,7vh,72px); height:clamp(46px,7vh,72px);
+    border-radius:8px; border:2.5px solid var(--muted);
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(20px,3vh,30px); color:var(--muted);
+    background:#0f1119;
+  }
+  .cb-face.checked{ border-color:var(--dom); color:var(--dom); background:var(--dom-dim); }
+  .cb-label{ font-size:clamp(10px,1.3vh,12px); color:var(--muted); text-align:center; margin-top:4px; }
+
+  .stack-wrap{ position:relative; height:100%; display:flex; align-items:center; justify-content:center; }
+  .stack-cell{
+    position:absolute;
+    width:clamp(40px,6.4vh,60px); height:clamp(40px,6.4vh,60px);
+    border-radius:8px; border:2px solid var(--muted);
+    background:#0f1119;
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(9px,1.1vh,11px); color:var(--muted);
+    transition:transform .3s ease, opacity .3s ease, border-color .3s ease;
+  }
+  .stack-cell.front{ border-color:var(--highlight); color:var(--highlight); }
+  .stack-cell.checked{ transform:translateX(160%); opacity:.25; border-color:var(--dom); }
+
+  .rate-row{ margin-bottom:clamp(6px,1vh,10px); }
+  .rate-row-title{ font-size:clamp(10px,1.2vh,12px); color:var(--muted); margin-bottom:3px; display:flex; justify-content:space-between; }
+  .rate-row-title .active-tag{ color:var(--dom); font-weight:700; }
+  .cells{ display:flex; gap:4px; flex-wrap:wrap; }
+  .cell{
+    width:clamp(14px,2vh,20px); height:clamp(14px,2vh,20px); border-radius:4px;
+    border:1.5px solid var(--muted); background:#0f1119; flex:0 0 auto;
+    transition:background .25s ease, border-color .25s ease, transform .25s ease;
+  }
+  .cell.checked{ background:var(--dom); border-color:var(--dom); }
+  .cell.new{ transform:scale(1.25); box-shadow:0 0 0 2px var(--highlight); }
+  .cells .ellipsis{ color:var(--muted); font-size:11px; align-self:center; }
+
+  .items-row{ display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+  .item-box{
+    border:1.5px solid var(--muted); border-radius:6px; padding:4px 7px;
+    font-size:clamp(9px,1.1vh,11px); color:var(--muted); background:#0f1119; text-align:center;
+    transition:all .25s ease;
+  }
+  .item-box.checked{ border-color:var(--dom); color:var(--dom); background:var(--dom-dim); }
+  .item-box.buyable{ border-color:var(--highlight); color:var(--highlight); }
+
+  .rate-vis-note{ margin-top:6px; font-size:clamp(9px,1.1vh,11px); color:var(--muted); }
+  .rate-vis-note b{ color:var(--dom); }
+
+  /* ---------- Sass panel content ---------- */
+  pre.code{
+    margin:0; white-space:pre-wrap; word-break:break-all;
+    font-family:"SFMono-Regular",Menlo,Consolas,monospace;
+    font-size:clamp(9px,1.15vh,12px); line-height:1.55;
+  }
+  .rule{
+    padding:5px 7px; border-radius:6px; margin-bottom:6px;
+    border:1px solid transparent; color:#9aa3ba;
+    transition:background .3s ease, border-color .3s ease, color .3s ease;
+  }
+  .rule.hl{ background:var(--sass-dim); border-color:var(--sass); color:#efe9ff; }
+  .rule.persist{ background:#22283a; border-color:#3a3f56; color:#b9c0d6; }
+  .rule .k{ color:var(--sass); }
+  .rule .v{ color:var(--counter); }
+
+  /* ---------- Counter panel content ---------- */
+  .formula{
+    font-size:clamp(13px,1.9vh,19px); font-weight:700; text-align:center;
+    margin:6px 0 10px 0; word-break:break-all;
+  }
+  .formula .eq{ color:var(--muted); font-weight:400; }
+  .term{
+    display:inline-block; padding:2px 6px; border-radius:5px; margin:0 2px;
+    background:#0f1119; border:1px solid var(--border); color:var(--muted);
+    transition:all .3s ease;
+  }
+  .term.persisted{ background:var(--counter-dim); border-color:#7a5a2a; color:#d8b988; }
+  .term.new{ background:var(--counter); border-color:var(--counter); color:#231602; transform:scale(1.12); font-weight:800; }
+  .total-box{
+    text-align:center; margin-top:auto; padding:clamp(8px,1.2vh,14px);
+    border-radius:8px; background:#0f1119; border:1.5px solid var(--counter-dim);
+  }
+  .total-box .n{ font-size:clamp(20px,3.4vh,34px); font-weight:800; color:var(--counter); }
+  .total-box .l{ font-size:clamp(9px,1.1vh,11px); color:var(--muted); }
+  .counter-note{ font-size:clamp(9px,1.1vh,11px); color:var(--muted); margin-top:6px; }
+
+  /* ---------- compiler slide ---------- */
+  #slide-compiler{ gap:clamp(8px,1.2vh,14px); min-height:0; }
+  #slide-compiler .headline{ font-size:clamp(14px,2vh,20px); font-weight:800; color:var(--sass); flex:0 0 auto; }
+  #slide-compiler .desc{ font-size:clamp(11px,1.4vh,14px); color:var(--muted); flex:0 0 auto; }
+  #compiler-body{
+    flex:1; min-height:0; display:grid; grid-template-columns: 1.1fr 1fr; gap:clamp(10px,1.6vw,20px);
+  }
+  #compiler-code{
+    background:var(--panel-bg); border:1px solid var(--sass-dim); border-radius:10px;
+    padding:clamp(8px,1.2vh,14px); overflow:auto;
+    display:grid; grid-auto-rows:max-content;
+    align-content:center;
+    align-content:safe center;
+  }
+  #compiler-table-wrap{
+    background:var(--panel-bg); border:1px solid var(--border); border-radius:10px;
+    padding:clamp(8px,1.2vh,14px); display:grid; grid-auto-rows:max-content; min-height:0;
+    align-content:center;
+    align-content:safe center;
+  }
+  table.state{ width:100%; border-collapse:collapse; font-size:clamp(10px,1.3vh,13px); }
+  table.state th, table.state td{ padding:4px 6px; border-bottom:1px solid var(--border); text-align:right; }
+  table.state th:first-child, table.state td:first-child{ text-align:left; }
+  table.state th{ color:var(--muted); font-weight:600; }
+  .bar-cell{ display:flex; align-items:center; gap:6px; justify-content:flex-end; }
+  .bar{ height:9px; border-radius:4px; background:var(--sass); }
+  .bar-track{ flex:1; background:#0f1119; border-radius:4px; height:9px; overflow:hidden; display:flex; justify-content:flex-end; }
+
+  /* ---------- summary slide ---------- */
+  #slide-summary{ align-items:center; justify-content:center; gap:clamp(8px,1.4vh,16px); }
+  #slide-summary h2{ font-size:clamp(16px,2.4vh,24px); margin:0; }
+  table.summary{ border-collapse:collapse; width:min(92vw, 900px); font-size:clamp(10px,1.5vh,14px); }
+  table.summary th, table.summary td{ border:1px solid var(--border); padding:8px 10px; text-align:left; }
+  table.summary th{ background:#191d29; }
+  table.summary td.dom{ color:var(--dom); } table.summary td.sass{ color:var(--sass); } table.summary td.counter{ color:var(--counter); }
+
+  /* ---------- footer ---------- */
+  #controls{
+    flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  button{
+    font-family:inherit; font-size:clamp(11px,1.4vh,14px); font-weight:700;
+    background:#1e2331; color:var(--text); border:1px solid var(--border);
+    border-radius:7px; padding:7px 16px; cursor:pointer;
+  }
+  button:hover{ background:#262c3d; }
+  button:disabled{ opacity:.35; cursor:default; }
+  #reset-btn{ color:var(--danger); border-color:#5a2a2a; }
+  #hint{ font-size:clamp(9px,1.15vh,11px); color:var(--muted); margin-left:8px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <h1>3層で見る CSS Cookie Clicker</h1>
+    <div id="progress-wrap"><div id="progress-bar"></div></div>
+    <div id="step-indicator">STEP <span id="step-now">1</span> / <span id="step-total">12</span></div>
+  </div>
+
+  <div id="stage">
+
+    <!-- STEP 0 -->
+    <section class="slide" id="slide-intro">
+      <p class="big-title">3つのレイヤーで同じ現象を見る</p>
+      <p class="sub">CSS Cookie Clicker はJS不使用。しかし裏では「checkboxの実体」「CSS counterの計算式」「Sassが生成した大量のセレクタ」が
+      互いに反応し合ってゲームを動かしている。この発表では、その3つの窓を常に並べて表示し、1つのクリックが層を跨いで
+      伝わっていく様子を追いかける。</p>
+      <div id="intro-badges">
+        <div class="badge dom">① DOM：checkedという実体</div>
+        <div class="badge sass">③ Sass：総当たり生成されたセレクタ</div>
+        <div class="badge counter">② Counter：cookies の計算式</div>
+      </div>
+    </section>
+
+    <!-- STEPS 1-9 -->
+    <section class="slide" id="slide-layers">
+      <div id="caption"></div>
+      <div id="layers-row">
+        <div class="panel panel-dom" id="panel-dom">
+          <h2><span class="dot dom"></span>① DOM：checkboxの実体</h2>
+          <div class="panel-body" id="dom-body"></div>
+        </div>
+        <div class="flow" id="flow-ds"><span>◆</span></div>
+        <div class="panel panel-sass" id="panel-sass">
+          <h2><span class="dot sass"></span>③ Sass生成：静的CSSセレクタ</h2>
+          <div class="panel-body" id="sass-body"></div>
+        </div>
+        <div class="flow" id="flow-sc"><span>◆</span></div>
+        <div class="panel panel-counter" id="panel-counter">
+          <h2><span class="dot counter"></span>② Counter：cookies の計算式</h2>
+          <div class="panel-body" id="counter-body"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 10 -->
+    <section class="slide" id="slide-compiler">
+      <div class="headline">③のレイヤーを拡大：Sassは「状態空間コンパイラ」</div>
+      <div class="desc">購入済みアイテムの集合（2^N通り）× 各rate群のクリック数の組み合わせを総当たりし、
+      「ちょうど購入可能になる境界」にだけ静的CSSルールを生成する（<code>buyable-frontier</code> / <code>click-rate-states</code>）。
+      アイテムが増えるほど、生成されるセレクタ数は組み合わせ的に増える。</div>
+      <div id="compiler-body">
+        <div id="compiler-code">
+<pre class="code">@function click-conditions($click-counts) {
+  $selector: "";
+  @for $rate from 1 through length($click-counts) {
+    $clicks: nth($click-counts, $rate);
+    @if $clicks > 0 {
+      $selector: $selector +
+        ":has(> .click-group.rate-#{$rate}
+           > input:nth-last-child(#{$clicks}):checked)";
+    }
+  }
+  @return $selector;
+}
+// buyable-frontier / buyable-states / click-rate-states が
+// これを「購入済み集合 × 各rateのクリック数」で再帰的に総当たりし、
+// 境界だけに --purchase-* を割り当てるCSSルールを吐き出す</pre>
+        </div>
+        <div id="compiler-table-wrap">
+          <table class="state">
+            <thead><tr><th>アイテム数</th><th>購入状態の組合せ</th><th>生成セレクタ規模</th></tr></thead>
+            <tbody id="state-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 11 -->
+    <section class="slide" id="slide-summary">
+      <h2>まとめ：3層の対応関係</h2>
+      <table class="summary">
+        <thead><tr><th>層</th><th>正体</th><th>役割</th></tr></thead>
+        <tbody>
+          <tr><td class="dom">① DOM</td><td>100個重ねたcheckbox（rate群）・item群</td><td>「何回クリックしたか」「何を買ったか」を checked という状態で記憶する実体</td></tr>
+          <tr><td class="sass">③ Sass生成CSS</td><td><code>:has()</code> と <code>:nth-last-child()</code> の総当たりセレクタ</td><td>①の状態を検知し、購入可否の表示・rateの可視化切り替えを静的に発火させる</td></tr>
+          <tr><td class="counter">② Counter</td><td><code>counter-increment</code> の積み上げ</td><td>③が発火させた増減を cookies 枚数として画面に表示する</td></tr>
+        </tbody>
+      </table>
+      <p class="sub" style="max-width:70ch;text-align:center;color:var(--muted);font-size:clamp(11px,1.5vh,14px);">
+        過去にrate-1で消費したクリックは、rate-2に切り替わった後も rate-1群のcheckboxとしてDOMに残り続け、
+        ①③②のどの層で見ても価値は「1」のまま変わらない。
+      </p>
+    </section>
+
+  </div>
+
+  <div id="controls">
+    <button id="prev-btn">◀ 前へ</button>
+    <button id="next-btn">次へ ▶</button>
+    <button id="reset-btn">リセット</button>
+    <span id="hint">矢印キー / Space / PageUp・PageDown で移動、Home または R でリセット</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STEPS = [
+    { slide:"intro" },
+
+    // 1: DOM単体
+    { slide:"layers",
+      caption:"レイヤー①<b>DOM</b>：<b>input[type=checkbox] が1個で「1回分のクリックの記憶」</b>を表す。checked/uncheckedの2状態しか持たない。",
+      dimDom:false, dimSass:true, dimCounter:true,
+      domView:"single" },
+
+    // 2: 100個重ねたスタック
+    { slide:"layers",
+      caption:"レイヤー①拡大：同じ位置に<b>100個のcheckboxが重ねて</b>配置され、一番手前の未checked要素だけがクリックを受け付ける。checkすると <code>left:500px</code> へ飛ばされ、1つ後ろが手前に出てくる。",
+      dimDom:false, dimSass:true, dimCounter:true,
+      domView:"stack" },
+
+    // 3: 1〜10回目クリック（DOMのみ変化）
+    { slide:"layers",
+      caption:"具体例：rate-1のcheckboxを<b>10回クリック</b>。rate-1群で<b>10個</b>がcheckedになる（①のみ変化）。",
+      dimDom:false, dimSass:true, dimCounter:true,
+      domView:"rates", rate1:10, rate2:0, item1:false, activeRate:1,
+      newDomHighlight:"rate1" },
+
+    // 4: DOM→Sass
+    { slide:"layers",
+      caption:"①→③：<code>:nth-last-child(10):checked</code> を含むセレクタが「rate-1群で末尾から10個checked」を検知する。",
+      dimDom:false, dimSass:false, dimCounter:true,
+      domView:"rates", rate1:10, rate2:0, item1:false, activeRate:1,
+      flowDS:"right", sassHL:["rate1"], },
+
+    // 5: Sass→Counter
+    { slide:"layers",
+      caption:"③→②：発火したセレクタの <code>counter-increment: cookies 1</code> がrate-1群の10個ぶん積み上がり、<b>1×10 = 10</b>。",
+      dimDom:true, dimSass:false, dimCounter:false,
+      flowSC:"right", sassHL:["rate1"],
+      counterTerms:[{id:"rate1",label:"1×10",state:"new"}], total:10 },
+
+    // 6: item1購入（DOM変化）
+    { slide:"layers",
+      caption:"具体例：残高10で購入可能になった<b>item1（5枚）</b>を購入。① <code>#item1</code> がcheckedになる。",
+      dimDom:false, dimSass:true, dimCounter:true,
+      domView:"rates", rate1:10, rate2:0, item1:true, activeRate:1,
+      newDomHighlight:"item1",
+      counterTerms:[{id:"rate1",label:"1×10",state:"persisted"}], total:10 },
+
+    // 7: item1 DOM→Sass→Counter
+    { slide:"layers",
+      caption:"①→③→②：<code>#item1:checked</code> セレクタが発火し <code>counter-increment: cookies -5</code>。式に <b>-5</b> が加わり合計 <b>10-5=5</b>。",
+      dimDom:false, dimSass:false, dimCounter:false,
+      domView:"rates", rate1:10, rate2:0, item1:true, activeRate:1,
+      flowDS:"right", flowSC:"right", sassHL:["item1"],
+      counterTerms:[{id:"rate1",label:"1×10",state:"persisted"},{id:"item1",label:"-5",state:"new"}], total:5 },
+
+    // 8: rate切替（Sass→DOM）
+    { slide:"layers",
+      caption:"③→①：購入数が1になったことで <code>click-rate-states</code> が生成した可視性ルールが発火し、rate-2群が <code>visibility:visible; pointer-events:auto;</code> になる（rate-1群は操作不可のまま残る）。",
+      dimDom:false, dimSass:false, dimCounter:true,
+      domView:"rates", rate1:10, rate2:0, item1:true, activeRate:2,
+      flowDS:"left", sassHL:["ratevis"], newDomHighlight:"ratevis",
+      counterTerms:[{id:"rate1",label:"1×10",state:"persisted"},{id:"item1",label:"-5",state:"persisted"}], total:5 },
+
+    // 9: rate-2で1クリック
+    { slide:"layers",
+      caption:"具体例：rate-2群で1回クリック。①→③→② と伝わり <b>+2</b> され合計 <b>5+2=7</b>。<b>rate-1群(1×10)は今も値を変えず効き続けている</b>。",
+      dimDom:false, dimSass:false, dimCounter:false,
+      domView:"rates", rate1:10, rate2:1, item1:true, activeRate:2,
+      flowDS:"right", flowSC:"right", sassHL:["rate2","rate1"],
+      newDomHighlight:"rate2",
+      counterTerms:[{id:"rate1",label:"1×10",state:"persisted"},{id:"item1",label:"-5",state:"persisted"},{id:"rate2",label:"2×1",state:"new"}], total:7 },
+
+    // 10: compiler
+    { slide:"compiler" },
+
+    // 11: summary
+    { slide:"summary" },
+  ];
+
+  var STEP_TOTAL = STEPS.length;
+  var current = 0;
+
+  var elStepNow = document.getElementById("step-now");
+  var elStepTotal = document.getElementById("step-total");
+  var elProgress = document.getElementById("progress-bar");
+  var elCaption = document.getElementById("caption");
+  var elDomBody = document.getElementById("dom-body");
+  var elSassBody = document.getElementById("sass-body");
+  var elCounterBody = document.getElementById("counter-body");
+  var elPanelDom = document.getElementById("panel-dom");
+  var elPanelSass = document.getElementById("panel-sass");
+  var elPanelCounter = document.getElementById("panel-counter");
+  var elFlowDS = document.getElementById("flow-ds");
+  var elFlowSC = document.getElementById("flow-sc");
+  var elPrev = document.getElementById("prev-btn");
+  var elNext = document.getElementById("next-btn");
+  var elReset = document.getElementById("reset-btn");
+
+  elStepTotal.textContent = STEP_TOTAL;
+
+  var SASS_RULES = {
+    rate1: {label:"rate-1 のクリック検知", code:'.click-group.rate-1 > input\n  :nth-last-child(N):checked {\n  counter-increment: cookies 1;\n}'},
+    rate2: {label:"rate-2 のクリック検知", code:'.click-group.rate-2 > input\n  :nth-last-child(N):checked {\n  counter-increment: cookies 2;\n}'},
+    item1: {label:"item1 購入時の減算", code:'#item1:checked {\n  counter-increment: cookies -5;\n}'},
+    ratevis: {label:"rateの可視化 (click-rate-states)", code:'#main:has(#item1:checked)\n  .click-group.rate-2 {\n  visibility: visible;\n  pointer-events: auto;\n}\n#main:has(#item1:checked)\n  .click-group.rate-1 {\n  visibility: hidden;\n  pointer-events: none;\n}'}
+  };
+
+  function renderDomSingle(){
+    elDomBody.innerHTML =
+      '<div class="checkbox-demo">' +
+        '<div><div class="cb-face">□</div><div class="cb-label">unchecked<br>＝未クリック</div></div>' +
+        '<div style="font-size:20px;color:var(--muted);">→ click →</div>' +
+        '<div><div class="cb-face checked">✓</div><div class="cb-label">checked<br>＝クリック済み</div></div>' +
+      '</div>';
+  }
+
+  function renderDomStack(){
+    var n = 6;
+    var cells = "";
+    for(var i=0;i<n;i++){
+      var offset = (n-1-i) * 8;
+      var isFront = i === n-1;
+      cells += '<div class="stack-cell' + (isFront ? ' front' : '') + '" style="transform:translate(' + offset + 'px,' + offset + 'px);">' + (isFront ? "手前" : "") + '</div>';
+    }
+    elDomBody.innerHTML =
+      '<div class="stack-wrap">' + cells + '</div>' +
+      '<div class="rate-vis-note">同じ場所に <b>100個</b> の checkbox が重なる。一番手前（DOM順で最後）の未checked要素だけが<b>クリック可能</b>。checkすると<code>left:500px</code>へ飛び、1つ後ろが手前に繰り上がる。</div>';
+  }
+
+  function cellsHtml(count, cap, newHighlight){
+    var html = "";
+    var shown = Math.min(count, cap);
+    for(var i=0;i<cap;i++){
+      var checked = i < shown;
+      var isNew = newHighlight && i === shown-1;
+      html += '<div class="cell' + (checked?' checked':'') + (isNew?' new':'') + '"></div>';
+    }
+    if(count > cap){ html += '<span class="ellipsis">…(' + count + '/100)</span>'; }
+    else { html += '<span class="ellipsis">/100</span>'; }
+    return html;
+  }
+
+  function renderDomRates(step){
+    var r1 = step.rate1||0, r2 = step.rate2||0;
+    var activeRate = step.activeRate||1;
+    var html = "";
+
+    html += '<div class="rate-row">';
+    html += '<div class="rate-row-title"><span>.click-group.rate-1' + (activeRate===1?' <span class="active-tag">［現在有効］</span>':' （非表示・操作不可）') + '</span><span>' + r1 + '/100 checked</span></div>';
+    html += '<div class="cells">' + cellsHtml(r1, 14, step.newDomHighlight==="rate1") + '</div>';
+    html += '</div>';
+
+    html += '<div class="rate-row">';
+    html += '<div class="rate-row-title"><span>.click-group.rate-2' + (activeRate===2?' <span class="active-tag">［現在有効］</span>':' （非表示・操作不可）') + '</span><span>' + r2 + '/100 checked</span></div>';
+    html += '<div class="cells">' + cellsHtml(r2, 14, step.newDomHighlight==="rate2") + '</div>';
+    if(step.newDomHighlight === "ratevis"){
+      html += '<div class="rate-vis-note"><b>rate-2 が可視化された</b>（購入数=1 → 有効rate=2）</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="items-row">';
+    for(var i=1;i<=4;i++){
+      var checked = (i===1 && step.item1);
+      html += '<div class="item-box' + (checked?' checked':'') + (step.newDomHighlight==="item1" && i===1?' buyable':'') + '">item' + i + (checked?' ✓':'') + '</div>';
+    }
+    html += '</div>';
+
+    elDomBody.innerHTML = html;
+  }
+
+  function renderSass(step){
+    var order = ["rate1","rate2","item1","ratevis"];
+    var hl = step.sassHL || [];
+    var html = "";
+    order.forEach(function(key){
+      var rule = SASS_RULES[key];
+      var isHL = hl.indexOf(key) !== -1;
+      var isPersist = !isHL && (key === "rate1" && step.total !== undefined && step.total >= 0 && (step.counterTerms||[]).some(function(t){return t.id==="rate1" && t.state==="persisted";}));
+      var cls = isHL ? "hl" : (isPersist ? "persist" : "");
+      html += '<div class="rule ' + cls + '"><div style="font-weight:700;margin-bottom:2px;">' + rule.label + '</div><pre class="code">' + rule.code.replace(/</g,"&lt;") + '</pre></div>';
+    });
+    elSassBody.innerHTML = html;
+  }
+
+  function renderCounter(step){
+    var terms = step.counterTerms || [];
+    if(terms.length === 0){
+      elCounterBody.innerHTML = '<div class="counter-note">まだクリックがありません。cookies = 0</div>';
+      return;
+    }
+    var formula = '<span class="eq">cookies = </span>';
+    formula += terms.map(function(t){
+      return '<span class="term ' + t.state + '">' + t.label + '</span>';
+    }).join('<span class="eq"> + </span>');
+    var html = '<div class="formula">' + formula + '</div>';
+    html += '<div class="total-box"><div class="n">' + step.total + '</div><div class="l">枚（cookies）</div></div>';
+    html += '<div class="counter-note">confirmed済みの項（薄い色）は過去のクリック・購入の効果がそのまま残り続けていることを表す。</div>';
+    elCounterBody.innerHTML = html;
+  }
+
+  function renderCompilerTable(){
+    var rows = [
+      {n:1, combos:"2", scale:6},
+      {n:2, combos:"4", scale:14},
+      {n:3, combos:"8", scale:30},
+      {n:4, combos:"16", scale:62},
+    ];
+    var max = 62;
+    var html = "";
+    rows.forEach(function(r){
+      var pct = Math.round(r.scale/max*100);
+      html += '<tr><td>' + r.n + '個</td><td>' + r.combos + '通り</td>' +
+        '<td><div class="bar-cell"><span>' + r.scale + '本目安</span>' +
+        '<div class="bar-track"><div class="bar" style="width:' + pct + '%;"></div></div></div></td></tr>';
+    });
+    document.getElementById("state-table-body").innerHTML = html;
+  }
+  renderCompilerTable();
+
+  function setFlow(el, dir){
+    el.classList.remove("active","pulse");
+    if(dir){
+      void el.offsetWidth; // reflow to restart animation
+      el.classList.add("active","pulse");
+      el.querySelector("span").textContent = dir === "left" ? "◀" : "▶";
+    } else {
+      el.querySelector("span").textContent = "◆";
+    }
+  }
+
+  function render(){
+    var step = STEPS[current];
+    elStepNow.textContent = current+1;
+    elProgress.style.width = ((current) / (STEP_TOTAL-1) * 100) + "%";
+
+    document.querySelectorAll(".slide").forEach(function(s){ s.classList.remove("active"); });
+    document.getElementById("slide-" + step.slide).classList.add("active");
+
+    if(step.slide === "layers"){
+      elCaption.innerHTML = step.caption || "";
+
+      elPanelDom.classList.toggle("dim", !!step.dimDom);
+      elPanelSass.classList.toggle("dim", !!step.dimSass);
+      elPanelCounter.classList.toggle("dim", !!step.dimCounter);
+
+      if(step.domView === "single"){ renderDomSingle(); }
+      else if(step.domView === "stack"){ renderDomStack(); }
+      else if(step.domView === "rates"){ renderDomRates(step); }
+      else { elDomBody.innerHTML = ""; }
+
+      if(step.dimSass){ elSassBody.innerHTML = '<div class="counter-note" style="padding:8px;">（このステップでは①に注目）</div>'; }
+      else { renderSass(step); }
+
+      if(step.dimCounter && !step.counterTerms){ elCounterBody.innerHTML = '<div class="counter-note" style="padding:8px;">（このステップでは①に注目）</div>'; }
+      else { renderCounter(step); }
+
+      setFlow(elFlowDS, step.flowDS || null);
+      setFlow(elFlowSC, step.flowSC || null);
+    }
+
+    elPrev.disabled = current === 0;
+    elNext.disabled = current === STEP_TOTAL-1;
+  }
+
+  function goTo(n){
+    current = Math.max(0, Math.min(STEP_TOTAL-1, n));
+    render();
+  }
+  function next(){ goTo(current+1); }
+  function prev(){ goTo(current-1); }
+  function reset(){ goTo(0); }
+
+  elNext.addEventListener("click", next);
+  elPrev.addEventListener("click", prev);
+  elReset.addEventListener("click", reset);
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "ArrowRight" || e.key === "PageDown" || e.key === " "){
+      e.preventDefault(); next();
+    } else if(e.key === "ArrowLeft" || e.key === "PageUp"){
+      e.preventDefault(); prev();
+    } else if(e.key === "Home" || e.key === "r" || e.key === "R"){
+      e.preventDefault(); reset();
+    } else if(e.key === "End"){
+      e.preventDefault(); goTo(STEP_TOTAL-1);
+    }
+  });
+
+  document.getElementById("stage").addEventListener("click", function(e){
+    if(e.target.closest("button")) return;
+    next();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
