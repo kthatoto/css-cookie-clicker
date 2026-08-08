@@ -199,7 +199,7 @@
 
   /* ---------- STEP 3〜5 共有の盤面 ---------- */
   .pg{
-    position:absolute; left:5cqw; right:5cqw; top:15.4cqw; bottom:6.6cqw;
+    position:absolute; left:5cqw; right:5cqw; top:16cqw; bottom:6.6cqw;
     display:none; flex-direction:column; gap:1.3cqw;
     counter-reset: bal 0;
   }
@@ -357,22 +357,22 @@
   .g16{ height:9.6cqw; }
   .g16 .u > label{ width:5.6cqw; height:5.6cqw; font-size:2.9cqw; }
   .g16 .u > input{ bottom:1.2cqw; left:calc(var(--i) * 2cqw); }
-  .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg1{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg2{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg2{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:checked):has(#i4:not(:checked)) .rg2{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:checked) .rg2{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:checked):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg3{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:checked):has(#i4:not(:checked)) .rg3{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:checked) .rg3{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:checked):has(#i4:not(:checked)) .rg3{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:not(:checked)):has(#i4:checked) .rg3{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:checked):has(#i4:checked) .rg3{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:not(:checked)) .rg4{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:checked):has(#i3:not(:checked)):has(#i4:checked) .rg4{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:checked):has(#i4:checked) .rg4{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:checked):has(#i4:checked) .rg4{ visibility:visible; pointer-events:auto; }
-  .st16:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:checked) .rg5{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg1{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg2{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg2{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:checked):has(#i4:not(:checked)) .rg2{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:checked) .rg2{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:checked):has(#i3:not(:checked)):has(#i4:not(:checked)) .rg3{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:checked):has(#i4:not(:checked)) .rg3{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:checked) .rg3{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:checked):has(#i4:not(:checked)) .rg3{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:not(:checked)):has(#i4:checked) .rg3{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:checked):has(#i4:checked) .rg3{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:not(:checked)) .rg4{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:checked):has(#i3:not(:checked)):has(#i4:checked) .rg4{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:checked):has(#i4:checked) .rg4{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:checked):has(#i4:checked) .rg4{ visibility:visible; pointer-events:auto; }
+  #st8:checked ~ .stage .st16:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:checked) .rg5{ visibility:visible; pointer-events:auto; }
   .st16 .gr1 .u > input:checked{ counter-increment: bal16 1; }
   .st16 .gr2 .u > input:checked{ counter-increment: bal16 2; }
   .st16 .gr3 .u > input:checked{ counter-increment: bal16 3; }
@@ -583,7 +583,7 @@
     <section class="slide sl5">
       <span class="tag">STEP 4</span>
       <h2>ショップが増えました。購入も、ただの checkbox です</h2>
-      <p>購入 ＝ <b>もう1個の checkbox（#item1）にチェックが入ること</b>。ボタンの隣にその実体を置いてあります。買うと価格ぶん引かれ、<span class="kw">rate-1</span> は無効になります。</p>
+      <p>購入 ＝ <b>もう1個の checkbox（#item1）にチェックが入ること</b>。買うと −5枚、<span class="kw">rate-1</span> は無効になります。</p>
       <div class="nav">
         <label class="btn" for="st4">◀ 前へ</label>
         <div class="track"><i style="width:36%"></i></div>
