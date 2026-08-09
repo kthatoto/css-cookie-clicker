@@ -309,7 +309,7 @@
   }
   .supn #sn4:checked{ outline-style:solid; outline-color:var(--accent3); }
   .supn .tgtmark{
-    position:absolute; bottom:2.35cqw; left:3.6cqw;
+    position:absolute; bottom:2.35cqw; left:5.3cqw;
     font-size:.9cqw; font-weight:800; color:var(--accent2); white-space:nowrap;
     transition:color .25s ease;
   }
@@ -717,9 +717,9 @@
       <div class="suprow">
         <div class="supdemo supn">
           <div class="grp">
-            <span class="u" style="--i:5"><input type="checkbox" id="sn1"><label for="sn1">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="sn2"><label for="sn2">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="sn3"><label for="sn3">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="sn4"><label for="sn4">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="sn5"><label for="sn5">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="sn6"><label for="sn6">🍪</label></span>
+            <span class="u" style="--i:0"><input type="checkbox" id="sn1"><label for="sn1">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="sn2"><label for="sn2">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="sn3"><label for="sn3">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="sn4"><label for="sn4">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="sn5"><label for="sn5">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="sn6"><label for="sn6">🍪</label></span>
             <div class="tgtmark">↑ ここが「後ろから3番目」（:nth-last-child(3)）</div>
-            <div class="dirline">列は消費される順に並べています（左端 ＝ DOM末尾 ＝ 一番手前）。✓は左から。</div>
+            <div class="dirline">この列はDOMの並びのまま。後ろ（右端 ＝ 末尾）から消費されるので、✓は右から増えます。</div>
           </div>
           <span class="okbig"></span>
         </div>
@@ -729,7 +729,7 @@
    これは「3回以上押した」の意味になる。
    4回・5回押しても成立したまま。✓を外せば不成立に戻る */</span></pre>
       </div>
-      <p class="sub">「N枚あるか」を数える機能はないので、<b>N回目に押される checkbox の位置</b>を条件にしています。列は<b>消費される順</b>（左端 ＝ DOM末尾）で並べているので、画面の<b>左から3番目</b> ＝ DOMの<b>後ろから3番目</b>です。</p>
+      <p class="sub">「N枚あるか」を数える機能はないので、<b>N回目に押される checkbox の位置</b>を条件にしています。この列は<b>DOMの並びのまま</b>（右端 ＝ 末尾 ＝ 一番手前）。後ろから消費されるので、3回目で「後ろから3番目」に ✓ が入ります。</p>
       <div class="nav">
         <label class="btn" for="st8">◀ 前へ</label>
         <div class="track"><i style="width:62%"></i></div>
