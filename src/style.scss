@@ -35,10 +35,6 @@ h1 {
   display: none;
 }
 
-input:checked {
-  counter-increment: cookies 1;
-}
-
 #main {
   position: relative;
   counter-reset: cookies 0;
@@ -54,30 +50,33 @@ input:checked {
     height: 100%;
   }
 
-  > input {
-    margin: 0;
+  > .click-group {
     position: absolute;
-    left: $disappear;
-    appearance: none;
-    border: none;
-  }
-  > input.increment {
+    inset: 50% auto auto 0;
+    transform: translateY(-50%);
     width: $cookie-size;
     height: $cookie-size;
-    inset: auto 0;
-    border-radius: 50%;
-    cursor: pointer;
-    &:first-child {
-      left: 0;
-    }
-    &:checked {
-      counter-increment: cookies 1;
-      left: $disappear;
-      + input.increment:not(:checked) {
-        left: 0;
-        + input.increment:not(:checked) {
-          left: $disappear;
-        }
+    visibility: hidden;
+    pointer-events: none;
+
+    > input.increment {
+      position: absolute;
+      inset: 0;
+      width: $cookie-size;
+      height: $cookie-size;
+      margin: 0;
+      appearance: none;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid black;
+        outline-offset: 2px;
+      }
+
+      &:checked {
+        left: $disappear;
       }
     }
   }
@@ -93,133 +92,178 @@ input:checked {
     flex-direction: column;
     gap: 10px;
     > div {
-      > input {
-        position: absolute;
-        left: $disappear;
-        appearance: none;
-      }
-      > button {
+      > .purchase {
         width: 100%;
-        background-color: gray;
-        cursor: not-allowed;
+        background-color: var(--purchase-background, gray);
+        cursor: var(--purchase-cursor, not-allowed);
         border: none;
-        padding: 0;
         position: relative;
         height: 30px;
-        > label {
-          display: block;
+        text-align: center;
+
+        > input.item {
           width: 100%;
           height: 100%;
           position: absolute;
-          top: 0;
-          left: $disappear;
+          inset: 0;
+          z-index: 1;
+          margin: 0;
+          opacity: 0;
+          visibility: var(--purchase-visibility, hidden);
           cursor: pointer;
         }
+
+        > span {
+          line-height: 30px;
+        }
+
+        &:has(> input.item:focus-visible) {
+          outline: 2px solid black;
+          outline-offset: 2px;
+        }
       }
     }
   }
 }
 
-@function pow($base, $exponents) {
-  $raised: 1;
-  @for $i from 1 through $exponents {
-    $raised: $raised * $base;
+@function click-conditions($click-counts) {
+  $selector: "";
+  @for $rate from 1 through length($click-counts) {
+    $clicks: nth($click-counts, $rate);
+    @if $clicks > 0 {
+      $selector: $selector + ":has(> .click-group.rate-#{$rate} > input:nth-last-child(#{$clicks}):checked)";
+    }
   }
-  @return $raised;
-}
-@function binary-hit($n, $digit) {
-  $binary: $n;
-  @for $i from 1 to $digit {
-    $binary: math.floor(math.div($binary, 2));
-  }
-  @return $binary % 2 == 1;
+  @return $selector;
 }
 
-@mixin shop-items($map-array) {
+@function item-state-selector($selector, $index, $state) {
+  @return $selector + ":has(#item#{$index}:#{$state})";
+}
+
+@function item-price($items, $index) {
+  @return nth(nth($items, $index), 2);
+}
+
+$item-states: ("not(:checked)": 0, "checked": 1);
+
+@mixin buyable-frontier(
+  $base-selector, $item-index, $required, $max-rate,
+  $click-counts: (), $rate: 1, $earned: 0, $min-rate: null
+) {
+  @if $earned >= $required {
+    @if $earned - $min-rate < $required {
+      $click-selector: click-conditions($click-counts);
+      #{$base-selector}#{$click-selector} > #shop > #items > .item#{$item-index} > .purchase {
+        --purchase-background: skyblue;
+        --purchase-cursor: pointer;
+        --purchase-visibility: visible;
+      }
+    }
+  } @else if $rate <= $max-rate {
+    $remaining: $required - $earned;
+    $max-clicks: math.ceil(math.div($remaining, $rate));
+    @for $clicks from 0 through $max-clicks {
+      $next-counts: append($click-counts, $clicks);
+      $next-earned: $earned + $clicks * $rate;
+      $next-min-rate: if($min-rate == null and $clicks > 0, $rate, $min-rate);
+      @include buyable-frontier(
+        $base-selector, $item-index, $required, $max-rate,
+        $next-counts, $rate + 1, $next-earned, $next-min-rate
+      );
+    }
+  }
+}
+
+@mixin click-rate-states(
+  $item-count, $index: 1, $selector: "#main", $purchased: 0
+) {
+  @if $index > $item-count {
+    #{$selector} > .click-group.rate-#{$purchased + 1} {
+      visibility: visible;
+      pointer-events: auto;
+    }
+  } @else {
+    @each $state, $increment in $item-states {
+      $next-selector: item-state-selector($selector, $index, $state);
+      @include click-rate-states(
+        $item-count, $index + 1, $next-selector, $purchased + $increment
+      );
+    }
+  }
+}
+
+@mixin click-rates($item-count) {
+  @for $rate from 1 through $item-count + 1 {
+    #main > .click-group.rate-#{$rate} > input.increment:checked {
+      counter-increment: cookies $rate;
+    }
+  }
+
+  @include click-rate-states($item-count);
+}
+
+@mixin buyable-states(
+  $items, $item-index, $index: 1, $selector: "#main",
+  $required: 0, $purchased: 0
+) {
+  @if $index > length($items) {
+    @include buyable-frontier(
+      $selector, $item-index, $required, $purchased + 1
+    );
+  } @else if $index == $item-index {
+    $next-selector: item-state-selector($selector, $index, "not(:checked)");
+    @include buyable-states(
+      $items, $item-index, $index + 1, $next-selector,
+      $required + item-price($items, $index), $purchased
+    );
+  } @else {
+    @each $state, $increment in $item-states {
+      $next-selector: item-state-selector($selector, $index, $state);
+      @include buyable-states(
+        $items, $item-index, $index + 1, $next-selector,
+        $required + item-price($items, $index) * $increment,
+        $purchased + $increment
+      );
+    }
+  }
+}
+
+@mixin shop-items($items) {
   $game-clear-condition: "";
-  @each $map in $map-array {
-    $index: map-get($map, index);
-    $item-name: map-get($map, name);
-    $price: map-get($map, price);
+  @for $index from 1 through length($items) {
+    $item: nth($items, $index);
+    $item-name: nth($item, 1);
+    $price: item-price($items, $index);
 
     #shop > #items > .item#{$index} > span::after {
-      content: $item-name + "：" + $price + "枚"
+      content: $item-name + "：" + $price + "枚（クリック +1枚）";
     }
 
-    $other-map-array: ();
-    @each $other-map in $map-array {
-      @if map-get($other-map, index) != $index {
-        $other-map-array: append($other-map-array, $other-map);
-      }
-    }
-
-    $buyable-selectors: "";
-    $loop-count: pow(2, length($other-map-array));
-    @for $i from 0 to $loop-count {
-      $required: $price;
-      @for $j from 1 through length($other-map-array) {
-        @if binary-hit($i, $j) {
-          $other-map: nth($other-map-array, $j);
-          $required: $required + map-get($other-map, price);
-        }
-      }
-      $selector: "";
-      @for $j from 1 through $required {
-        @if $j < $required {
-          $selector: $selector + "input.increment:checked + ";
-        } @else {
-          $selector: $selector + "input.increment:checked ~ ";
-        }
-      }
-      @for $j from 1 through length($other-map-array) {
-        $other-map: nth($other-map-array, $j);
-        // input#item1
-        $selector: $selector + "input#item" + map-get($other-map, index);
-        @if binary-hit($i, $j) {
-          // input#item1:checked +
-          $selector: $selector + ":checked ~ ";
-        } @else {
-          // input#item1:not(:checked) +
-          $selector: $selector + ":not(:checked) ~ ";
-        }
-      }
-      $selector: $selector + "#shop > #items > .item" + $index + " > button";
-      @if $i < $loop-count - 1 {
-        $selector: $selector + ", ";
-      }
-      $buyable-selectors: $buyable-selectors + $selector;
-    }
-
-    #{$buyable-selectors} {
-      background-color: skyblue;
-      > label {
-        left: 0;
-      }
-    }
+    @include buyable-states($items, $index);
 
     #item#{$index}:checked {
       counter-increment: cookies -#{$price};
-      ~ #shop > #items > .item#{$index} {
-        > button {
-          > span::after {
-            content: "済み";
-          }
-          > label {
-            left: $disappear;
-          }
-        }
+    }
+    #main:has(#item#{$index}:checked) > #shop > #items > .item#{$index} {
+      > .purchase > span::after {
+        content: "済み";
       }
     }
-    $game-clear-condition: $game-clear-condition + "#item" + $index + ":checked ~ ";
+    $game-clear-condition: $game-clear-condition + ":has(#item" + $index + ":checked)";
   }
 
-  #{$game-clear-condition} #game-clear {
+  #main#{$game-clear-condition} > #game-clear {
     display: block;
   }
 }
 
-$item1: (index: 1, name: "Special Cookie 1", price: 5);
-$item2: (index: 2, name: "Special Cookie 2", price: 10);
-$item3: (index: 3, name: "Special Cookie 3", price: 10);
-$item4: (index: 4, name: "Special Cookie 4", price: 15);
-@include shop-items(($item1, $item2, $item3, $item4));
+$items: (
+  ("Special Cookie 1", 5),
+  ("Special Cookie 2", 10),
+  ("Special Cookie 3", 10),
+  ("Special Cookie 4", 15)
+);
+
+@include click-rates(length($items));
+@include shop-items($items);
