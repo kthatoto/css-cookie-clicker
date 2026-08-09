@@ -300,9 +300,24 @@
     background:rgba(126,200,227,.16); border-color:var(--accent2); color:#eaf6fb;
     box-shadow:0 0 1.8cqw rgba(126,200,227,.35);
   }
-  .supn .grp{ width:26cqw; height:9cqw; }
+  .supn .grp{ width:34cqw; height:12cqw; }
   .supn .grp .u > label{ width:5cqw; height:5cqw; font-size:2.6cqw; }
-  .supn .grp .u > input{ bottom:1.7cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
+  .supn .grp .u > input{ bottom:4.1cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
+  /* 判定対象（DOMの後ろから3番目 ＝ 画面では左から3番目）を常時マークする */
+  .supn #sn4{
+    outline:.2cqw dashed var(--accent2); outline-offset:.16cqw; border-radius:.2cqw;
+  }
+  .supn #sn4:checked{ outline-style:solid; outline-color:var(--accent3); }
+  .supn .tgtmark{
+    position:absolute; bottom:2.35cqw; left:3.6cqw;
+    font-size:.9cqw; font-weight:800; color:var(--accent2); white-space:nowrap;
+    transition:color .25s ease;
+  }
+  .supn:has(#sn4:checked) .tgtmark{ color:var(--accent3); }
+  .supn .dirline{
+    position:absolute; bottom:0; left:0; right:0;
+    font-size:.82cqw; color:#7d6b58;
+  }
   .okbig{
     align-self:flex-start; font-size:1.25cqw; font-weight:800;
     padding:.45cqw 1.2cqw; border-radius:.6cqw;
@@ -670,7 +685,7 @@
 
     <!-- 補足 3ページ -->
     <section class="slide sl7">
-      <span class="tag sup">補足 ①（飛ばしてOK）</span>
+      <span class="tag sup">補足 ①</span>
       <h2>counter ＝ CSSが持てる唯一の「数」</h2>
       <div class="suprow">
         <div class="supdemo supc">
@@ -696,7 +711,7 @@
     </section>
 
     <section class="slide sl8">
-      <span class="tag sup">補足 ②（飛ばしてOK）</span>
+      <span class="tag sup">補足 ②</span>
       <h2>:has() ＝ 中を見て、外を変える</h2>
       <div class="suprow">
         <div class="supdemo suph">
@@ -721,12 +736,14 @@
     </section>
 
     <section class="slide sl9">
-      <span class="tag sup">補足 ③（飛ばしてOK）</span>
+      <span class="tag sup">補足 ③</span>
       <h2>:nth-last-child(N) ＝ 後ろからN番目</h2>
       <div class="suprow">
         <div class="supdemo supn">
           <div class="grp">
             <span class="u" style="--i:5"><input type="checkbox" id="sn1"><label for="sn1">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="sn2"><label for="sn2">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="sn3"><label for="sn3">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="sn4"><label for="sn4">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="sn5"><label for="sn5">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="sn6"><label for="sn6">🍪</label></span>
+            <div class="tgtmark">↑ ここが「後ろから3番目」（:nth-last-child(3)）</div>
+            <div class="dirline">列は消費される順に並べています（左端 ＝ DOM末尾 ＝ 一番手前）。✓は左から。</div>
           </div>
           <span class="okbig"></span>
         </div>
@@ -736,7 +753,7 @@
    これは「3回以上押した」の意味になる。
    4回・5回押しても成立したまま。✓を外せば不成立に戻る */</span></pre>
       </div>
-      <p class="sub">「N枚あるか」を数える機能はないので、<b>N回目に押される checkbox の位置</b>を条件にしています。</p>
+      <p class="sub">「N枚あるか」を数える機能はないので、<b>N回目に押される checkbox の位置</b>を条件にしています。列は<b>消費される順</b>（左端 ＝ DOM末尾）で並べているので、画面の<b>左から3番目</b> ＝ DOMの<b>後ろから3番目</b>です。</p>
       <div class="nav">
         <label class="btn" for="st8">◀ 前へ</label>
         <div class="track"><i style="width:62%"></i></div>
