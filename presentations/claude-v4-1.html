@@ -718,14 +718,14 @@
           <div class="grp">
             <span class="u" style="--i:0"><input type="checkbox" id="sn1"><label for="sn1">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="sn2"><label for="sn2">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="sn3"><label for="sn3">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="sn4"><label for="sn4">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="sn5"><label for="sn5">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="sn6"><label for="sn6">🍪</label></span>
             <div class="tgtmark">↑ ここが「後ろから3番目」（:nth-last-child(3)）</div>
-            <div class="dirline">この列はDOMの並びのまま。後ろ（右端 ＝ 末尾）から消費されるので、✓は右から増えます。</div>
+            <div class="dirline">HTMLでは<b>後に書いた要素が手前</b>に重なる → 手前 ＝ 末尾（右端）から先に押されるので、✓は右から増えます。</div>
           </div>
           <span class="okbig"></span>
         </div>
         <pre class="code sm"><span class="sel">input:nth-last-child(3):checked</span>  <span class="cmt">/* 後ろから3番目が checked */</span>
 
-<span class="cmt">/* 重ねた checkbox は後ろ（DOM末尾）から消費されるので、
-   これは「3回以上押した」の意味になる。
+<span class="cmt">/* 後に書いた要素が手前 → 手前から押される ＝ 消費はDOM末尾から。
+   だからこれは「3回以上押した」の意味になる。
    4回・5回押しても成立したまま。✓を外せば不成立に戻る */</span></pre>
       </div>
       <p class="sub">「N枚あるか」を数える機能はないので、<b>N回目に押される checkbox の位置</b>を条件にしています。この列は<b>DOMの並びのまま</b>（右端 ＝ 末尾 ＝ 一番手前）。後ろから消費されるので、3回目で「後ろから3番目」に ✓ が入ります。</p>
