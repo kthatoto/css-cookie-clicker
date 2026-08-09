@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!--
+  claude-1.html — 「ストーリー型」プレゼン資料
+
+  ■ 狙い
+    CSS Cookie Clicker の核心トリック（100個の checkbox を重ねて連続クリックに
+    見せる／CSS counter で枚数を数える／購入すると次の rate 専用グループに
+    切り替わる／過去のクリックは古いレーンに固定されたまま価値が変わらない）を、
+    抽象論からではなく「実際に10回クリックしてitem1を買い、rate2に切り替わる」
+    という *ひとつの具体的なプレイ* を時系列でなぞりながら理解させる。
+    一般化（N個のアイテム・任意順購入・Sassの状態爆発）は終盤に軽く触れる程度。
+
+  ■ 説明順（= スライド/ステップの並び）
+    0. タイトル
+    1. 「checkbox 1個 = クリック1回分の記憶」の最小デモ
+    2. 「checkbox 100個を重ねる」と連続クリックに見える仕組み（8個の縮小デモ）
+    3. rate=1 で10回クリック → 10 cookies（CSS counterの式を実演）
+    4. item1purchase（5cookies）→ 減算 & rate2専用グループが有効化
+    5. rate=2 の専用checkbox群で+2ずつ、残高 5→7 に増える
+    6. rate1レーン（過去・固定）と rate2レーン（現在）が併存し、過去の価値は
+       変わらないことを積み上げ表示で強調
+    7. 一般化：購入済みアイテムの集合＝状態、任意の順で購入できる
+    8. Sassは「状態 × 購入可能境界から大量のCSSセレクタを事前生成する
+       コンパイラ」であることの図解（アイテム数と組合せ数の爆発）
+    9. まとめ
+
+  ■ 各アニメーション/インタラクションが意味するもの
+    - ステップ1の checkbox: checked/unchecked の2値だけが「記憶」の正体。
+    - ステップ2のスタック: 同じ位置に重なった要素は「後のDOM順が手前」に
+      描画される。手前のcheckboxをcheckして退避させると、次のDOM順の要素が
+      自然に手前へ現れる（JSを一切使わず、実ゲームと同じ仕組みで再現）。
+    - ステップ3〜6の counter 表示: すべて実物と同じ CSS counter-reset /
+      counter-increment / content: counter() で計算しており、擬似的な数値
+      ではなく「その場でクリックすると本当に数え上げが変わる」デモになっている。
+    - ステップ6の2レーン: rate1のチェックボックスは disabled な既チェック
+      状態で固定表示し、「過去のクリックはもう操作できないが記憶は消えない」
+      ことを視覚的に示す。rate2側だけがクリック可能で伸びていく。
+    - ステップ8の棒: アイテム数が増えるほど「購入済み集合 × 各rateの
+      クリック数パターン」の組合せが指数的に増える様子を単純な棒の高さで示す
+      （実測値ではなく2^Nのオーダー感を伝えるための概念図）。
+    - ページ送り自体（Prev/Next/Reset/キー操作）はゲーム本体と無関係な
+      「進行制御」なので、ここだけ小さな inline JavaScript を使っている。
+      ゲームの数値表示・状態遷移デモそのものは全て CSS のみで動く。
+
+  ■ 技術メモ
+    - 16:9 の 1280x720 を「基準サイズ」とし、transform: scale() で
+      ウィンドウに収める方式のため、1280x720 でも 1440x900 でも overflow しない。
+    - 外部リソース・ネットワークアクセスなし。単一ファイルで完結。
+    - prefers-reduced-motion: reduce のとき、トランジション/アニメーションを
+      すべて実質ゼロ秒にする。
+-->
+<title>CSS Cookie Clicker — ストーリーで読み解く仕組み</title>
+<style>
+  :root{
+    --bg: #1b140f;
+    --panel: #241a13;
+    --panel2: #2c2019;
+    --accent: #ffb347;
+    --accent2: #7ec8e3;
+    --accent3: #9be564;
+    --text: #f5ead9;
+    --muted: #b8a892;
+    --danger: #ff8a80;
+    --stage-w: 1280px;
+    --stage-h: 720px;
+    --footer-h: 58px;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background:#0c0906;
+    overflow:hidden;
+    font-family: "Hiragino Sans", "Yu Gothic", "Segoe UI", sans-serif;
+    color: var(--text);
+  }
+  .viewport{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stage{
+    position:absolute; top:50%; left:50%;
+    width:var(--stage-w); height:var(--stage-h);
+    transform-origin:center center;
+    background: radial-gradient(120% 140% at 20% 0%, #2a1d12 0%, var(--bg) 60%);
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,.6);
+    overflow:hidden;
+  }
+  .content{
+    position:absolute; left:0; right:0; top:0;
+    height:calc(var(--stage-h) - var(--footer-h));
+    overflow:hidden;
+  }
+  .slide{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    padding:34px 56px 20px;
+    opacity:0; visibility:hidden;
+    transition:opacity .35s ease;
+    pointer-events:none;
+  }
+  .slide.active{ opacity:1; visibility:visible; pointer-events:auto; }
+
+  .kicker{
+    font-size:14px; letter-spacing:.12em; color:var(--accent2);
+    text-transform:uppercase; margin:0 0 6px;
+  }
+  h1{ font-size:38px; margin:0 0 10px; line-height:1.25; }
+  h2{ font-size:26px; margin:0 0 14px; color:var(--accent); }
+  p{ margin:0 0 10px; line-height:1.65; font-size:16px; color:var(--text); }
+  .muted{ color:var(--muted); font-size:14px; }
+  .row{ display:flex; gap:24px; align-items:center; flex:1; min-height:0; }
+  .col{ flex:1; min-width:0; }
+  .badge{
+    display:inline-block; padding:3px 10px; border-radius:999px;
+    background: rgba(255,179,71,.15); color:var(--accent);
+    font-size:12px; font-weight:bold; margin-bottom:10px;
+  }
+  code, .code{
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size:13px; background:#120d09; border:1px solid #3a2c1e;
+    border-radius:8px; padding:10px 14px; display:block; color:#ffd9a0;
+    line-height:1.6; white-space:pre;
+  }
+
+  /* ---------- title slide ---------- */
+  .title-wrap{
+    flex:1; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; text-align:center; gap:14px;
+  }
+  .cookie-hero{ font-size:96px; filter:drop-shadow(0 8px 18px rgba(0,0,0,.5)); }
+  .title-wrap h1{ font-size:44px; }
+  .title-wrap p{ font-size:18px; color:var(--muted); max-width:720px; }
+
+  /* ---------- generic checkbox-as-cookie styling ---------- */
+  .cookie-box{ appearance:none; -webkit-appearance:none; margin:0; }
+  .cookie-label{
+    display:flex; align-items:center; justify-content:center;
+    width:64px; height:64px; border-radius:50%;
+    background: linear-gradient(160deg,#d9a256,#a9682a);
+    border:3px solid #6b3f16; font-size:30px; cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,.4);
+    transition: transform .25s ease, opacity .25s ease, filter .25s ease;
+    user-select:none;
+  }
+  .cookie-box:checked + .cookie-label{
+    filter:grayscale(.6) brightness(.6);
+    transform:translateX(120px) scale(.85);
+    opacity:.35;
+    cursor:default;
+  }
+  .cookie-box:disabled + .cookie-label{ cursor:default; }
+
+  /* ---------- step 1: single checkbox demo ---------- */
+  .single-demo{
+    display:flex; align-items:center; gap:28px; justify-content:center;
+    background:var(--panel); border-radius:16px; padding:30px; flex:1;
+  }
+  .single-demo .state-text{ font-size:18px; width:280px; }
+  .single-demo .state-text b{ color:var(--accent); }
+  .s1-msg-unchecked, .s1-msg-checked{ display:none; }
+  #s1-box:not(:checked) ~ .state-text .s1-msg-unchecked{ display:block; }
+  #s1-box:checked ~ .state-text .s1-msg-checked{ display:block; }
+
+  /* ---------- step 2: stack demo ---------- */
+  .stack-wrap{
+    flex:1; display:flex; gap:32px; align-items:center; justify-content:center;
+    background:var(--panel); border-radius:16px; padding:24px;
+  }
+  .stack{ position:relative; width:150px; height:150px; }
+  .stack .cookie-box{ position:absolute; inset:0; }
+  .stack .cookie-label{
+    position:absolute; inset:0; width:100%; height:100%; border-radius:22px;
+  }
+  .stack-status{ font-size:16px; }
+  .stack-status .n{ font-size:40px; color:var(--accent); font-weight:bold; }
+  .stack-counter{ counter-reset: used 0; }
+  .stack .cookie-box:checked{ counter-increment: used 1; }
+  .stack-count::before{ content: counter(used); }
+  .stack-status .of{ font-size:16px; color:var(--muted); }
+
+  /* ---------- step 3: rate1 formula demo ---------- */
+  .clickrow{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  /* input は display:none にすると box が生成されず counter が動かなくなるため、
+     サイズ0で「見えないが存在する」状態にして counter-increment を効かせる */
+  .clickrow .cookie-box{ position:static; width:0; height:0; margin:0; padding:0; border:0; opacity:0; }
+  .clickrow .cookie-label{ position:static; width:44px; height:44px; font-size:20px; }
+  .clickrow .cookie-box:checked + .cookie-label{ transform:none; opacity:.25; filter:grayscale(1); }
+  .formula-panel{
+    background:var(--panel2); border:1px solid #4a3520; border-radius:14px;
+    padding:20px 24px; min-width:300px;
+  }
+  .formula-panel .big{ font-size:34px; color:var(--accent); font-weight:bold; }
+  .r1counter{ counter-reset: r1 0; }
+  .r1 .cookie-box:checked{ counter-increment: r1 1; }
+  .r1total::before{ content: counter(r1); }
+
+  /* ---------- step 4: purchase demo ---------- */
+  .purchase-wrap{ display:flex; gap:28px; flex:1; align-items:center; }
+  .item-card{
+    background:var(--panel); border-radius:14px; padding:20px; width:280px;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    border:2px solid #4a3520;
+  }
+  .item-card .emoji{ font-size:44px; }
+  .buy-btn-hidden{
+    position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;
+  }
+  .buy-label{
+    display:inline-block; margin-top:4px; padding:8px 14px; border-radius:10px;
+    background:#3a2c1e; border:2px solid #6b3f16; cursor:pointer;
+    font-size:14px; color:var(--accent2); transition: background .25s, border-color .25s;
+  }
+  #s4-buy:checked ~ .item-card{ border-color:var(--accent3); }
+  #s4-buy:checked ~ .item-card .buy-label{ background:var(--accent3); border-color:#5a8a2f; color:#0c0906; }
+  .s4-before, .s4-after{ display:flex; flex-direction:column; gap:10px; }
+  #s4-buy:checked ~ .s4-panels .s4-before{ display:none; }
+  .s4-after{ display:none; }
+  #s4-buy:checked ~ .s4-panels .s4-after{ display:flex; }
+  .rate-pill{
+    display:inline-block; padding:6px 14px; border-radius:999px;
+    font-size:14px; font-weight:bold; margin-right:8px;
+    background:#332417; color:var(--muted); border:1px solid #4a3520;
+    transition: background .3s, color .3s, border-color .3s;
+  }
+  .rate-pill.on{ background:rgba(126,200,227,.18); color:var(--accent2); border-color:var(--accent2); }
+  #s4-buy:checked ~ .s4-panels .rate1-pill{ background:#332417; color:var(--muted); border-color:#4a3520; }
+  #s4-buy:checked ~ .s4-panels .rate2-pill{ background:rgba(126,200,227,.18); color:var(--accent2); border-color:var(--accent2); }
+
+  /* ---------- step 5: rate2 click demo ---------- */
+  .rate2counter{ counter-reset: bal 5; }
+  .rate2counter .cookie-box:checked{ counter-increment: bal 2; }
+  .bal::before{ content: counter(bal); }
+
+  /* ---------- step 6: lanes ---------- */
+  .lanes{ display:flex; flex-direction:column; gap:18px; flex:1; }
+  .lane{
+    background:var(--panel); border-radius:12px; padding:14px 18px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .lane .lane-label{ width:170px; font-size:14px; color:var(--muted); flex-shrink:0; }
+  .lane .lane-boxes{ display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+  .lane .mini{ width:26px; height:26px; border-radius:6px; }
+  .lane.frozen .mini-label{
+    width:26px; height:26px; border-radius:6px; background:#5c4326;
+    border:2px solid #7a5a33; opacity:.55;
+    display:flex; align-items:center; justify-content:center; font-size:11px;
+  }
+  .lane.live .mini-box{ appearance:none; margin:0; }
+  .lane.live .mini-label{
+    width:26px; height:26px; border-radius:6px; background:#3a2c1e;
+    border:2px solid #6b3f16; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--accent2);
+    transition: background .25s, transform .25s;
+  }
+  .lane.live .mini-box:checked + .mini-label{ background:var(--accent2); color:#0c0906; transform:scale(1.05); }
+  .lanecounter{ counter-reset: total 5; }
+  .lane.live .mini-box:checked{ counter-increment: total 2; }
+  .lane-total::before{ content: counter(total); }
+
+  /* ---------- step 7: generalization ---------- */
+  .combo-row{ display:flex; gap:18px; justify-content:center; margin-top:18px; }
+  .combo{
+    background:var(--panel); border-radius:12px; padding:16px; width:190px;
+    text-align:center; border:1px solid #4a3520;
+  }
+  .combo .items{ font-size:22px; letter-spacing:6px; margin:8px 0; }
+  .combo .path{ font-size:12px; color:var(--muted); }
+
+  /* ---------- step 8: sass explosion ---------- */
+  .bars{ display:flex; align-items:flex-end; gap:34px; height:280px; flex:1; padding:0 30px; }
+  .bar-col{ display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; }
+  .bar{ width:56px; background:linear-gradient(180deg,var(--accent2),#3a6a80); border-radius:6px 6px 0 0; }
+  .bar-val{ font-size:13px; color:var(--muted); }
+  .bar-n{ font-size:13px; font-weight:bold; }
+
+  /* ---------- summary ---------- */
+  .summary-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; flex:1; justify-content:center; }
+  .summary-list li{
+    background:var(--panel); border-left:4px solid var(--accent);
+    border-radius:8px; padding:12px 18px; font-size:16px;
+  }
+
+  /* ---------- footer / nav ---------- */
+  .footer{
+    position:absolute; left:0; right:0; bottom:0; height:var(--footer-h);
+    display:flex; align-items:center; gap:16px; padding:0 20px;
+    background:#150f0a; border-top:1px solid #3a2c1e;
+  }
+  .nav-btn{
+    background:#2c2019; color:var(--text); border:1px solid #4a3520;
+    border-radius:8px; padding:8px 16px; font-size:14px; cursor:pointer;
+  }
+  .nav-btn:hover:not(:disabled){ background:#3a2c1e; }
+  .nav-btn:disabled{ opacity:.35; cursor:default; }
+  .reset-btn{ border-color:var(--danger); color:var(--danger); }
+  .progress-wrap{ flex:1; display:flex; align-items:center; gap:12px; }
+  .progress-track{ flex:1; height:6px; border-radius:999px; background:#3a2c1e; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--accent); width:0%; transition:width .3s ease; }
+  .step-label{ font-size:13px; color:var(--muted); width:110px; text-align:right; white-space:nowrap; }
+  .hint{ font-size:12px; color:var(--muted); }
+
+  form{ margin:0; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:.001ms !important; animation-duration:.001ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="stage" id="stage">
+    <div class="content" id="content">
+
+      <!-- 0: TITLE -->
+      <section class="slide active" data-title="タイトル">
+        <div class="title-wrap">
+          <div class="cookie-hero">🍪</div>
+          <p class="kicker" style="text-align:center;">CSS ONLY / NO JAVASCRIPT GAME</p>
+          <h1>CSS Cookie Clicker<br>を1プレイぶん、そのまま追いかける</h1>
+          <p>checkbox・:checked・CSS counter・:has() だけで動くクッキークリッカーの仕組みを、
+          「10回クリックしてアイテムを買う」という具体的な流れに沿って解説します。</p>
+        </div>
+      </section>
+
+      <!-- 1: single checkbox = 1 click memory -->
+      <section class="slide" data-title="checkbox1個=クリックの記憶">
+        <span class="badge">STEP 1</span>
+        <h2>checkbox 1個 = クリック1回ぶんの「記憶」</h2>
+        <p>このゲームに数値変数はありません。あるのは大量の <code style="display:inline;padding:2px 6px;">input[type=checkbox]</code> と、
+        その <b>checked / unchecked</b> という2値だけです。まずは1個だけ動かしてみましょう。</p>
+        <form class="single-demo">
+          <input type="checkbox" id="s1-box" class="cookie-box">
+          <label for="s1-box" class="cookie-label">🍪</label>
+          <div class="state-text">
+            <p class="s1-msg-unchecked"><b>unchecked</b><br>まだクリックされていない状態。<br>「この1回はまだ消費されていない」</p>
+            <p class="s1-msg-checked"><b>checked</b><br>クリックされ、状態が固定された。<br>この記憶はCSSでもう元に戻せない見た目に変わる。</p>
+          </div>
+        </form>
+      </section>
+
+      <!-- 2: 100 checkboxes stacked -->
+      <section class="slide" data-title="重ねて連続クリック">
+        <span class="badge">STEP 2</span>
+        <h2>同じ場所に100個重ねると「連続クリック」に見える</h2>
+        <p>実際のゲームでは同じ位置に <b>100個</b> のcheckboxが重なっています。
+        DOM順で後ろにある要素ほど手前に描画されるため、一番手前の1個だけがクリックできます。
+        checkすると横へ退避し、1つ前の要素が自動的に手前へ現れます（下は8個の縮小版・JS不使用）。</p>
+        <form class="stack-wrap">
+          <div class="stack stack-counter">
+            <input type="checkbox" id="s2-1" class="cookie-box"><label for="s2-1" class="cookie-label">1</label>
+            <input type="checkbox" id="s2-2" class="cookie-box"><label for="s2-2" class="cookie-label">2</label>
+            <input type="checkbox" id="s2-3" class="cookie-box"><label for="s2-3" class="cookie-label">3</label>
+            <input type="checkbox" id="s2-4" class="cookie-box"><label for="s2-4" class="cookie-label">4</label>
+            <input type="checkbox" id="s2-5" class="cookie-box"><label for="s2-5" class="cookie-label">5</label>
+            <input type="checkbox" id="s2-6" class="cookie-box"><label for="s2-6" class="cookie-label">6</label>
+            <input type="checkbox" id="s2-7" class="cookie-box"><label for="s2-7" class="cookie-label">7</label>
+            <input type="checkbox" id="s2-8" class="cookie-box"><label for="s2-8" class="cookie-label">8</label>
+          </div>
+          <div class="stack-status">
+            消費した数: <span class="n"><span class="stack-count"></span></span> <span class="of">/ 8</span>
+            <p class="hint" style="margin-top:14px;">手前の🍪をクリックし続けてみてください。<br>右下「Reset」でスタックを積み直せます。</p>
+          </div>
+        </form>
+      </section>
+
+      <!-- 3: rate1, 10 clicks -->
+      <section class="slide" data-title="10回クリックで10cookies">
+        <span class="badge">STEP 3</span>
+        <h2>いま rate = 1。10回クリックして 10 cookies</h2>
+        <!-- counter-reset は「その要素と子孫・後続兄弟」までしかスコープが届かないため、
+             クリック列と表示先の両方を含む .row に置く -->
+        <div class="row r1counter">
+          <div class="col">
+            <p>最初に見えているのは <code style="display:inline;padding:2px 6px;">.click-group.rate-1</code> だけです。
+            1回のクリックは <b>+1</b>。CSSは checked になった要素の数を数えて、そのまま合計しています。</p>
+            <form class="clickrow r1">
+              <span>
+                <input type="checkbox" id="s3-1" class="cookie-box"><label for="s3-1" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-2" class="cookie-box"><label for="s3-2" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-3" class="cookie-box"><label for="s3-3" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-4" class="cookie-box"><label for="s3-4" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-5" class="cookie-box"><label for="s3-5" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-6" class="cookie-box"><label for="s3-6" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-7" class="cookie-box"><label for="s3-7" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-8" class="cookie-box"><label for="s3-8" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-9" class="cookie-box"><label for="s3-9" class="cookie-label">🍪</label>
+              </span><span>
+                <input type="checkbox" id="s3-10" class="cookie-box"><label for="s3-10" class="cookie-label">🍪</label>
+              </span>
+            </form>
+          </div>
+          <div class="col formula-panel">
+            <p class="muted" style="margin-bottom:6px;">実際のSCSS（rateごとに生成）</p>
+            <code>.rate-1 > input:checked {
+  counter-increment: cookies 1;
+}
+#result::after {
+  content: counter(cookies) "枚";
+}</code>
+            <p style="margin-top:16px;">現在のcookies</p>
+            <div class="big r1total"></div>
+            <p class="muted">10個ぜんぶcheckすると 10 になります。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4: purchase item1 -->
+      <section class="slide" data-title="item1を購入">
+        <span class="badge">STEP 4</span>
+        <h2>10 cookies 貯まったので item1（5cookies）を購入</h2>
+        <p>購入 = <code style="display:inline;padding:2px 6px;">#item1</code> という別のcheckboxをcheckすること。
+        checkすると価格ぶんが減算され、同時に「購入済みアイテム数」が0→1になるので、
+        有効な click-group が <b>rate-1 → rate-2</b> へ切り替わります。</p>
+        <form class="purchase-wrap">
+          <input type="checkbox" id="s4-buy" class="buy-btn-hidden">
+          <div class="item-card">
+            <div class="emoji">🖱️</div>
+            <div>item1（5 cookies）</div>
+            <label for="s4-buy" class="buy-label">クリックして購入する</label>
+          </div>
+          <div class="s4-panels col">
+            <div class="s4-before">
+              <div class="formula-panel">
+                <p class="muted">購入前</p>
+                <div class="big">cookies = 10</div>
+                <p><span class="rate-pill rate1-pill on">rate-1 有効</span><span class="rate-pill rate2-pill">rate-2 無効</span></p>
+              </div>
+            </div>
+            <div class="s4-after">
+              <div class="formula-panel">
+                <p class="muted">購入後（#item1:checked）</p>
+                <div class="big">cookies = 10 − 5 = 5</div>
+                <p><span class="rate-pill rate1-pill">rate-1 無効（見えない・操作不可）</span></p>
+                <p><span class="rate-pill rate2-pill">rate-2 有効！</span></p>
+                <code style="margin-top:6px;">#item1:checked {
+  counter-increment: cookies -5;
+}</code>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- 5: rate2 clicks -->
+      <section class="slide" data-title="rate2で+2、残高7">
+        <span class="badge">STEP 5</span>
+        <h2>rate-2 専用の checkbox 群に切り替わった</h2>
+        <p>rate-1の10個は画面から消え、代わりに <code style="display:inline;padding:2px 6px;">.click-group.rate-2</code> の
+        checkboxが手前に現れます。ここでは1回のクリックが <b>+2</b>。1回クリックすると残高は 5 → 7 になります。</p>
+        <div class="row rate2counter">
+          <div class="col">
+            <form class="clickrow">
+              <span><input type="checkbox" id="s5-1" class="cookie-box"><label for="s5-1" class="cookie-label">🍪</label></span>
+              <span><input type="checkbox" id="s5-2" class="cookie-box"><label for="s5-2" class="cookie-label">🍪</label></span>
+              <span><input type="checkbox" id="s5-3" class="cookie-box"><label for="s5-3" class="cookie-label">🍪</label></span>
+              <span><input type="checkbox" id="s5-4" class="cookie-box"><label for="s5-4" class="cookie-label">🍪</label></span>
+            </form>
+            <p class="hint">クリックするたびに +2 されます。</p>
+          </div>
+          <div class="col formula-panel">
+            <code>.rate-2 > input:checked {
+  counter-increment: cookies 2;
+}</code>
+            <p style="margin-top:16px;">現在のcookies（開始値5）</p>
+            <div class="big bal"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6: two lanes -->
+      <section class="slide" data-title="2つのレーンが共存">
+        <span class="badge">STEP 6</span>
+        <h2>過去のクリックと今のクリックは、別のレーンに残り続ける</h2>
+        <p>rate-1で消費した10回分のcheckboxは、DOM上から消えたわけではありません。
+        <b>見えなくなっただけ</b>で、今も「rate-1レーン」に checked のまま存在し、価値はずっと 1 のままです。
+        新しいクリックだけが rate-2レーンに積まれ、2倍で数えられます。</p>
+        <form class="lanes lanecounter">
+          <div class="lane frozen">
+            <div class="lane-label">rate-1 レーン（過去・固定）<br><span class="muted">×1 / 個・操作不可</span></div>
+            <div class="lane-boxes">
+              <span class="mini-label">✓</span><span class="mini-label">✓</span><span class="mini-label">✓</span>
+              <span class="mini-label">✓</span><span class="mini-label">✓</span><span class="mini-label">✓</span>
+              <span class="mini-label">✓</span><span class="mini-label">✓</span><span class="mini-label">✓</span>
+              <span class="mini-label">✓</span>
+            </div>
+          </div>
+          <div class="lane live">
+            <div class="lane-label">rate-2 レーン（今・操作可）<br><span class="muted">×2 / 個</span></div>
+            <div class="lane-boxes">
+              <input type="checkbox" id="s6-1" class="mini-box"><label for="s6-1" class="mini-label">+2</label>
+              <input type="checkbox" id="s6-2" class="mini-box"><label for="s6-2" class="mini-label">+2</label>
+              <input type="checkbox" id="s6-3" class="mini-box"><label for="s6-3" class="mini-label">+2</label>
+              <input type="checkbox" id="s6-4" class="mini-box"><label for="s6-4" class="mini-label">+2</label>
+              <input type="checkbox" id="s6-5" class="mini-box"><label for="s6-5" class="mini-label">+2</label>
+              <input type="checkbox" id="s6-6" class="mini-box"><label for="s6-6" class="mini-label">+2</label>
+            </div>
+          </div>
+          <div class="formula-panel">
+            <span class="muted">合計 = (rate-1: 10×1) − (item1: 5) + (rate-2: 各×2) = </span>
+            <span class="big lane-total" style="display:inline;"></span>
+          </div>
+        </form>
+      </section>
+
+      <!-- 7: generalization -->
+      <section class="slide" data-title="一般化：購入は任意順">
+        <span class="badge">STEP 7</span>
+        <h2>一般化：状態は「購入済みアイテムの集合」</h2>
+        <p>ここまでは item1 を最初に買う例でしたが、実際は item1〜item4 を <b>好きな順番</b>で買えます。
+        「状態」とは、購入済み・未購入の組み合わせ（2進数のビット列のようなもの）にすぎません。</p>
+        <div class="combo-row">
+          <div class="combo"><div class="items">●○○○</div><div class="path">item1 だけ購入</div></div>
+          <div class="combo"><div class="items">○●○●</div><div class="path">item2, item4 を購入</div></div>
+          <div class="combo"><div class="items">●●●○</div><div class="path">item1,2,3 を購入</div></div>
+        </div>
+        <p class="muted" style="margin-top:20px;">● = 購入済み ／ ○ = 未購入。各組み合わせごとに「今どのアイテムが買えるか」がCSSで判定されています。</p>
+      </section>
+
+      <!-- 8: sass compiler -->
+      <section class="slide" data-title="Sassは状態のコンパイラ">
+        <span class="badge">STEP 8</span>
+        <h2>Sassは「状態 → 購入可能セレクタ」を事前生成するコンパイラ</h2>
+        <p>「どのアイテムが購入済みか」×「各rate群のクリック数」の全組み合わせを
+        再帰mixin（buyable-frontier / buyable-states / click-rate-states）で総当たりし、
+        購入可能になる境界にだけ静的なCSSルールを生成しています。アイテムが増えるほど組み合わせは指数的に増えます。</p>
+        <div class="bars">
+          <div class="bar-col"><div class="bar" style="height:20px;"></div><div class="bar-n">N=1</div><div class="bar-val">2状態</div></div>
+          <div class="bar-col"><div class="bar" style="height:44px;"></div><div class="bar-n">N=2</div><div class="bar-val">4状態</div></div>
+          <div class="bar-col"><div class="bar" style="height:90px;"></div><div class="bar-n">N=3</div><div class="bar-val">8状態</div></div>
+          <div class="bar-col"><div class="bar" style="height:180px;"></div><div class="bar-n">N=4</div><div class="bar-val">16状態</div></div>
+          <div class="bar-col"><div class="bar" style="height:260px; background:linear-gradient(180deg,var(--danger),#7a3a34);"></div><div class="bar-n">N=8</div><div class="bar-val">256状態 ＋ 各rateの分岐</div></div>
+        </div>
+        <p class="muted">縦軸は「購入済み/未購入」の組み合わせ数（2^N）の概念図。実際はここに各rateのクリック数パターンが掛け合わさります。</p>
+      </section>
+
+      <!-- 9: summary -->
+      <section class="slide" data-title="まとめ">
+        <span class="badge">STEP 9</span>
+        <h2>まとめ</h2>
+        <ul class="summary-list">
+          <li>🍪 <b>checkbox 1個</b> = クリック1回ぶんの記憶。checked/uncheckedの2値しかない。</li>
+          <li>📚 <b>100個を同じ場所に重ねる</b>ことで、1個ずつ消費される「連続クリック」を演出している。</li>
+          <li>🔢 <b>CSS counter</b> が checked の数 × rate を合算し、購入時にアイテム価格を減算する。</li>
+          <li>🔀 購入すると<b>次のrate専用グループ</b>が有効化され、過去のクリックは古いレーンに固定されたまま価値が変わらない。</li>
+          <li>🧮 Sassは「購入済み集合 × クリック数」の状態空間を総当たりし、購入可能な境界にだけCSSを生成するコンパイラとして働いている。</li>
+        </ul>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      <button class="nav-btn" id="prevBtn" aria-label="前へ">◀ Prev</button>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <span class="step-label" id="stepLabel">Step 1 / 10</span>
+      <button class="nav-btn" id="nextBtn" aria-label="次へ">Next ▶</button>
+      <button class="nav-btn reset-btn" id="resetBtn" aria-label="最初に戻す">⟲ Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // ---- 進行制御のみを担当する小さなJS（ゲーム本体のロジックには一切関与しない） ----
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var progressFill = document.getElementById('progressFill');
+  var stepLabel = document.getElementById('stepLabel');
+  var idx = 0;
+
+  function fit(){
+    var sw = 1280, sh = 720;
+    var scale = Math.min(window.innerWidth / sw, window.innerHeight / sh);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  function render(){
+    slides.forEach(function(s, i){ s.classList.toggle('active', i === idx); });
+    progressFill.style.width = (idx / (slides.length - 1) * 100) + '%';
+    stepLabel.textContent = 'Step ' + (idx + 1) + ' / ' + slides.length;
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === slides.length - 1;
+  }
+
+  function next(){ if (idx < slides.length - 1){ idx++; render(); } }
+  function prev(){ if (idx > 0){ idx--; render(); } }
+  function resetAll(){
+    idx = 0;
+    render();
+    document.querySelectorAll('form').forEach(function(f){ f.reset(); });
+  }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  resetBtn.addEventListener('click', resetAll);
+
+  window.addEventListener('keydown', function(e){
+    var forward = ['ArrowRight', 'ArrowDown', 'PageDown', ' '];
+    var backward = ['ArrowLeft', 'ArrowUp', 'PageUp'];
+    if (forward.indexOf(e.key) !== -1){ e.preventDefault(); next(); }
+    else if (backward.indexOf(e.key) !== -1){ e.preventDefault(); prev(); }
+    else if (e.key === 'Home' || e.key === 'r' || e.key === 'R'){ e.preventDefault(); resetAll(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
