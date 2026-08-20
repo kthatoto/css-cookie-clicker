@@ -11,15 +11,9 @@
     1 表紙 / 2 checkbox=記憶 / 3 スタック / 4-6 盤面（要素とCSSを並置）
     7-9 補足: counter・:has()・:nth-last-child
     10 配分 / 11 16列 / 12 Sass / 13 まとめ / 14 ネタバラシ（JSゼロ＋ラジオ出現）
-
-  ■ v3からの変更
-    - ✓は左から埋まる（--i をDOM逆順に割り当て）
-    - checked は直接押して解除できる（未checkedは順番どおりのみ）
-    - CSSルール: 日本語タイトル + セレクタ右コメント + 「有効」バッジ
-    - 16状態は 16列×(🍪+checkbox4個) を全部表示
   ==========================================================================
 -->
-<title>CSS Cookie Clicker — 1プレイぶん、積み上げて読む</title>
+<title>CSS Cookie Clicker — 1プレイ分、積み上げて読む</title>
 <style>
 
   :root{
@@ -51,7 +45,7 @@
   .slide{
     position:absolute; inset:0;
     padding:3.4cqw 5cqw 8.6cqw;
-    display:flex; flex-direction:column; gap:1.2cqw;
+    display:flex; flex-direction:column; gap:1cqw;
     opacity:0; visibility:hidden; pointer-events:none;
     transition:opacity .32s ease;
   }
@@ -73,7 +67,7 @@
   }
 
   .tag{
-    align-self:flex-start; font-size:1.05cqw; font-weight:800; letter-spacing:.14em;
+    align-self:flex-start; font-size:1.2cqw; font-weight:800; letter-spacing:.14em;
     color:var(--accent); background:rgba(255,179,71,.14);
     border:1px solid rgba(255,179,71,.35); border-radius:99px; padding:.35cqw 1.1cqw;
   }
@@ -81,19 +75,19 @@
     color:var(--accent2); background:rgba(126,200,227,.12);
     border-color:rgba(126,200,227,.4);
   }
-  h1{ font-size:4.4cqw; line-height:1.22; margin:0; }
-  h2{ font-size:2.7cqw; line-height:1.28; margin:0; color:var(--accent); }
-  p{ font-size:1.45cqw; line-height:1.55; margin:0; color:var(--text); }
+  h1{ font-size:4.8cqw; line-height:1.22; margin:0; }
+  h2{ font-size:3cqw; line-height:1.28; margin:0; color:var(--accent); }
+  p{ font-size:1.62cqw; line-height:1.55; margin:0; color:var(--text); }
   .sub{ color:var(--muted); }
-  .big{ font-size:2cqw; line-height:1.5; }
+  .big{ font-size:2.2cqw; line-height:1.5; }
   b{ color:#ffd9a0; }
   .kw{ color:var(--accent2); font-weight:700; }
-  .hint{ font-size:1cqw; color:#7d6b58; }
+  .hint{ font-size:1.12cqw; color:#7d6b58; }
 
   code, .code{
     display:block; white-space:pre;
     font-family:"SFMono-Regular",Menlo,Consolas,monospace;
-    font-size:1.05cqw; line-height:1.7;
+    font-size:1.18cqw; line-height:1.7;
     background:#0d0805; color:#e9d7bd;
     border:1px solid var(--line); border-left:.35cqw solid var(--accent);
     border-radius:.7cqw; padding:.9cqw 1.2cqw; overflow:auto;
@@ -102,16 +96,18 @@
   .code .has{ color:var(--accent2); }
   .code .prop{ color:var(--accent3); }
   .code .cmt{ color:#8d7962; }
-  .code.sm{ font-size:.95cqw; line-height:1.55; }
+  .code .at{ color:#e79bc4; font-weight:700; }
+  .code .var{ color:#c9b6ff; }
+  .code.sm{ font-size:1.03cqw; line-height:1.55; }
 
   .nav{
-    position:absolute; left:5cqw; right:5cqw; bottom:2.4cqw;
+    position:absolute; left:5cqw; right:5cqw; bottom:2.1cqw;
     display:flex; align-items:center; gap:1.2cqw;
   }
   .btn{
     display:inline-flex; align-items:center; justify-content:center;
-    font-size:1.2cqw; font-weight:700; font-family:inherit;
-    padding:.7cqw 1.4cqw; border-radius:.7cqw;
+    font-size:1.32cqw; font-weight:700; font-family:inherit;
+    padding:.62cqw 1.4cqw; border-radius:.7cqw;
     background:var(--panel2); color:var(--text);
     border:1px solid var(--line); cursor:pointer;
     transition:background .2s ease, border-color .2s ease;
@@ -122,7 +118,7 @@
   .btn.ghost{ color:var(--danger); border-color:rgba(255,143,122,.45); background:transparent; }
   .track{ flex:1; height:.45cqw; background:#33251a; border-radius:99px; overflow:hidden; }
   .track i{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),#ffd9a0); }
-  .pos{ font-size:1.1cqw; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .pos{ font-size:1.22cqw; color:var(--muted); font-variant-numeric:tabular-nums; }
 
   /* ---------- クリック群（--i はDOM逆順。✓は左から埋まる） ---------- */
   .grp{ position:relative; width:100%; height:11.4cqw; }
@@ -150,7 +146,7 @@
   }
   .grp .caption{
     position:absolute; bottom:0; left:0; right:0;
-    font-size:.88cqw; line-height:1.4; color:var(--muted);
+    font-size:1cqw; line-height:1.4; color:var(--muted);
   }
 
   .center{ align-items:center; justify-content:center; text-align:center; }
@@ -176,32 +172,35 @@
   }
   #one-cb{ order:2; width:2.2cqw; height:2.2cqw; accent-color:var(--accent); cursor:pointer; margin:0; }
   #one-cb:checked + .cookie{ transform:rotate(-12deg) scale(.9); filter:grayscale(.7) brightness(.6); }
-  .one .state{ order:3; font-size:1.45cqw; }
-  .one .state .now{ font-size:2.3cqw; font-weight:800; color:var(--accent2); }
+  .one .state{ order:3; font-size:1.6cqw; }
+  .one .state .now{ font-size:2.5cqw; font-weight:800; color:var(--accent2); }
   .msg-off,.msg-on{ display:none; }
   .one:not(:has(#one-cb:checked)) .msg-off{ display:block; }
   .one:has(#one-cb:checked) .msg-on{ display:block; }
 
   /* ---------- CSSルールブロック ---------- */
   .rule{
+    --rc-sel:#6d5c49; --rc-prop:#6d5c49; --rc-cm:#54432f;
     position:relative;
     background:#0d0805; border:1px solid #2c1e14; border-left:.3cqw solid #2c1e14;
-    border-radius:.55cqw; padding:.5cqw 4.4cqw .5cqw .9cqw;
+    border-radius:.55cqw; padding:.34cqw 3.1cqw .34cqw .85cqw;
     transition:border-color .25s ease, background .25s ease;
   }
   .rule .rtitle{
-    display:block; font-size:.98cqw; font-weight:800; color:#b8a68d;
+    display:block; font-size:1.02cqw; font-weight:800; color:#b8a68d;
     margin-bottom:.15cqw; transition:color .25s ease;
   }
   .rule pre{
     margin:0; font-family:"SFMono-Regular",Menlo,Consolas,monospace;
-    font-size:.82cqw; line-height:1.55; white-space:pre; overflow-x:auto; color:#6d5c49;
+    font-size:.86cqw; line-height:1.45; white-space:pre; overflow-x:auto; color:#6d5c49;
     transition:color .25s ease;
   }
-  .rule pre .cm{ color:#54432f; }
+  .rule pre .cm{ color:var(--rc-cm); transition:color .25s ease; }
+  .rule pre .sl{ color:var(--rc-sel); transition:color .25s ease; }
+  .rule pre .pr{ color:var(--rc-prop); transition:color .25s ease; }
   .rule .ok{
     position:absolute; right:.6cqw; top:.45cqw;
-    font-size:.8cqw; font-weight:800; letter-spacing:.1em;
+    font-size:.88cqw; font-weight:800; letter-spacing:.1em;
     color:var(--accent3); opacity:0; transition:opacity .25s ease;
   }
 
@@ -215,10 +214,10 @@
     background:var(--panel2); border:1px solid var(--line); border-radius:1cqw;
     padding:.45cqw 1.5cqw;
   }
-  .balance .lb{ font-size:1.2cqw; color:var(--muted); }
-  .balance .n{ font-size:2.7cqw; font-weight:800; color:var(--accent); line-height:1; }
+  .balance .lb{ font-size:1.32cqw; color:var(--muted); }
+  .balance .n{ font-size:2.9cqw; font-weight:800; color:var(--accent); line-height:1; }
   .balance .n::after{ content:counter(bal); }
-  .balance .unit{ font-size:1.2cqw; }
+  .balance .unit{ font-size:1.32cqw; }
   .buyrow{ display:flex; align-items:center; gap:.8cqw; }
   .buychk{
     width:1.7cqw; height:1.7cqw; margin:0; flex:0 0 auto;
@@ -226,7 +225,7 @@
   }
   #pg-buy:checked{ pointer-events:auto; cursor:pointer; }
   .buy{
-    flex:1; display:block; text-align:center; font-size:1.2cqw; font-weight:800;
+    flex:1; display:block; text-align:center; font-size:1.32cqw; font-weight:800;
     padding:.8cqw 1cqw; border-radius:.7cqw;
     background:#4a4038; color:#8d8175; border:.2cqw solid #5c5148;
     cursor:not-allowed; pointer-events:none; user-select:none;
@@ -255,6 +254,7 @@
   .pg:has(#pg-buy:checked) .rl-minus,
   .pg:has(#pg-buy:checked) .rl-sw{
     border-color:var(--accent); border-left-color:var(--accent); background:#1b1108;
+    --rc-sel:#ffcf87; --rc-prop:var(--accent3); --rc-cm:#8d7962;
   }
   .pg:has(.g1 .u > input:checked) .rl-c1 .ok,
   .pg:has(.g2 .u > input:checked) .rl-c2 .ok,
@@ -276,7 +276,7 @@
   .pg:has(#pg-buy:checked) .rl-sw .rtitle{ color:var(--accent); }
 
   /* ---------- 補足ページ ---------- */
-  .suprow{ display:grid; grid-template-columns:1fr 1.15fr; gap:1.8cqw; align-items:start; }
+  .suprow{ display:grid; grid-template-columns:1fr 1.5fr; gap:1.8cqw; align-items:start; }
   .supdemo{
     background:var(--panel); border:1px solid var(--line); border-radius:1cqw;
     padding:1.4cqw 1.7cqw; display:flex; flex-direction:column; gap:1cqw;
@@ -284,15 +284,15 @@
   .supboxes{ display:flex; gap:1.1cqw; }
   .supboxes input{ width:2.5cqw; height:2.5cqw; margin:0; accent-color:var(--accent); cursor:pointer; }
   .supout{ display:flex; align-items:baseline; gap:.6cqw; }
-  .supout .n{ font-size:3.8cqw; font-weight:800; color:var(--accent); line-height:1; }
-  .supout .lb{ font-size:1.2cqw; color:var(--muted); }
+  .supout .n{ font-size:4cqw; font-weight:800; color:var(--accent); line-height:1; }
+  .supout .lb{ font-size:1.32cqw; color:var(--muted); }
   .supc{ counter-reset: sc 0; }
   .supc .supboxes input:checked{ counter-increment: sc 2; }
   .supc .supout .n::after{ content:counter(sc); }
   .suptgt{
     border:.25cqw solid var(--line); border-radius:1cqw;
     padding:1.3cqw 1.7cqw; display:flex; gap:1.3cqw; align-items:center;
-    font-size:1.35cqw; color:var(--muted);
+    font-size:1.5cqw; color:var(--muted);
     transition:background .3s ease, border-color .3s ease, color .3s ease, box-shadow .3s ease;
   }
   .suptgt input{ width:2.3cqw; height:2.3cqw; accent-color:var(--accent); cursor:pointer; margin:0; }
@@ -300,26 +300,26 @@
     background:rgba(126,200,227,.16); border-color:var(--accent2); color:#eaf6fb;
     box-shadow:0 0 1.8cqw rgba(126,200,227,.35);
   }
-  .supn .grp{ width:34cqw; height:12cqw; }
+  .supn .grp{ width:31cqw; height:13cqw; }
   .supn .grp .u > label{ width:5cqw; height:5cqw; font-size:2.6cqw; }
-  .supn .grp .u > input{ bottom:4.1cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
+  .supn .grp .u > input{ bottom:5.5cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
   /* 判定対象（DOMの後ろから3番目 ＝ 画面では左から3番目）を常時マークする */
   .supn #sn4{
     outline:.2cqw dashed var(--accent2); outline-offset:.16cqw; border-radius:.2cqw;
   }
   .supn #sn4:checked{ outline-style:solid; outline-color:var(--accent3); }
   .supn .tgtmark{
-    position:absolute; bottom:2.35cqw; left:5.3cqw;
-    font-size:.9cqw; font-weight:800; color:var(--accent2); white-space:nowrap;
+    position:absolute; bottom:3.6cqw; left:5.3cqw;
+    font-size:1cqw; font-weight:800; color:var(--accent2); white-space:nowrap;
     transition:color .25s ease;
   }
   .supn:has(#sn4:checked) .tgtmark{ color:var(--accent3); }
   .supn .dirline{
     position:absolute; bottom:0; left:0; right:0;
-    font-size:.82cqw; color:#7d6b58;
+    font-size:.9cqw; color:#7d6b58;
   }
   .okbig{
-    align-self:flex-start; font-size:1.25cqw; font-weight:800;
+    align-self:flex-start; font-size:1.38cqw; font-weight:800;
     padding:.45cqw 1.2cqw; border-radius:.6cqw;
     background:#332417; color:#6d5c49; border:1px solid var(--line);
     transition:background .3s ease, color .3s ease, border-color .3s ease;
@@ -335,7 +335,7 @@
   .pick-radio{ position:absolute; width:1px; height:1px; opacity:0; margin:0; }
   .dist-pick label{
     font-family:"SFMono-Regular",Menlo,Consolas,monospace;
-    font-size:1.2cqw; padding:.65cqw 1cqw; border-radius:.6cqw; cursor:pointer;
+    font-size:1.32cqw; padding:.65cqw 1cqw; border-radius:.6cqw; cursor:pointer;
     background:var(--panel2); border:1px solid var(--line); color:var(--muted);
   }
   #d1:checked ~ .dist-pick label[for=d1], #d2:checked ~ .dist-pick label[for=d2],
@@ -347,7 +347,7 @@
   #d3:checked ~ .dist-out .o3, #d4:checked ~ .dist-out .o4{ display:flex; }
   .chips{ display:flex; gap:.7cqw; align-items:center; flex-wrap:wrap; }
   .chip{
-    font-size:1.2cqw; font-weight:800;
+    font-size:1.32cqw; font-weight:800;
     background:var(--panel2); border:1px solid var(--accent); color:#ffd9a0;
     border-radius:.6cqw; padding:.4cqw .95cqw;
   }
@@ -356,7 +356,7 @@
 
   /* ---------- 16列 ---------- */
   .itrow{ display:flex; gap:1.7cqw; align-items:center; }
-  .itrow .it{ display:flex; gap:.5cqw; align-items:center; font-size:1.3cqw; }
+  .itrow .it{ display:flex; gap:.5cqw; align-items:center; font-size:1.44cqw; }
   .itrow .it input{ width:1.7cqw; height:1.7cqw; margin:0; accent-color:var(--accent); cursor:pointer; }
   .itrow .it label{ cursor:pointer; }
   .st16{ counter-reset: bal16 0; display:flex; flex-direction:column; gap:.8cqw; }
@@ -365,9 +365,9 @@
     background:var(--panel2); border:1px solid var(--line);
     border-radius:.8cqw; padding:.35cqw 1.1cqw;
   }
-  .bal16 .n{ font-size:2.2cqw; font-weight:800; color:var(--accent); line-height:1; }
+  .bal16 .n{ font-size:2.4cqw; font-weight:800; color:var(--accent); line-height:1; }
   .bal16 .n::after{ content:counter(bal16); }
-  .bal16 .lb{ font-size:.95cqw; color:var(--muted); }
+  .bal16 .lb{ font-size:1.05cqw; color:var(--muted); }
   .grid16{ display:grid; grid-template-columns:repeat(16,1fr); gap:.4cqw; }
   .c16{
     display:flex; flex-direction:column; align-items:center; gap:.25cqw;
@@ -378,10 +378,10 @@
   }
   .b16{
     font-family:"SFMono-Regular",Menlo,Consolas,monospace;
-    font-size:.82cqw; padding:.12cqw .35cqw; border-radius:.3cqw;
+    font-size:.9cqw; padding:.12cqw .35cqw; border-radius:.3cqw;
     background:#120c08; color:#a8946f; transition:background .25s ease, color .25s ease;
   }
-  .rt{ font-size:.8cqw; color:var(--muted); font-weight:800; }
+  .rt{ font-size:.88cqw; color:var(--muted); font-weight:800; }
   .mstk{ position:relative; width:100%; height:6.2cqw; }
   .mstk .u > input{
     position:absolute; bottom:0; left:calc(50% - 2.05cqw + var(--i) * 1.05cqw);
@@ -467,20 +467,20 @@
     transition:opacity .45s ease;
   }
   .clear16 .t{ font-size:7cqw; font-weight:800; color:#fff; }
-  .clear16 .s{ font-size:1.35cqw; color:var(--muted); }
+  .clear16 .s{ font-size:1.5cqw; color:var(--muted); }
   .sl11:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:checked) .clear16{ opacity:1; }
 
   /* ---------- Sass壁 ---------- */
   .sassrow{ display:grid; grid-template-columns:1fr 1.15fr; gap:1.8cqw; flex:1; min-height:0; }
   .sassrow > div{ display:flex; flex-direction:column; gap:.6cqw; min-width:0; min-height:0; }
-  .sassrow h3{ margin:0; font-size:1.3cqw; color:var(--accent); }
+  .sassrow h3{ margin:0; font-size:1.44cqw; color:var(--accent); }
   .wall{
     position:relative; flex:1; min-height:0; overflow:hidden;
     background:#0d0805; border:1px solid var(--line); border-radius:.7cqw;
   }
   .wall-inner{
     font-family:"SFMono-Regular",Menlo,Consolas,monospace;
-    font-size:.62cqw; line-height:1.5; color:#9c8064;
+    font-size:.7cqw; line-height:1.5; color:#9c8064;
     white-space:pre-wrap; word-break:break-all;
     padding:.8cqw 1cqw;
     animation:wallscroll 60s linear infinite;
@@ -488,7 +488,7 @@
   @keyframes wallscroll{ 0%{ transform:translateY(0);} 100%{ transform:translateY(-50%);} }
   .wall .stamp{
     position:absolute; right:1cqw; bottom:.8cqw; z-index:2;
-    font-size:1.3cqw; font-weight:800; color:#fff;
+    font-size:1.44cqw; font-weight:800; color:#fff;
     background:rgba(181,67,47,.92); border-radius:.5cqw; padding:.5cqw 1.1cqw;
   }
   .wall::after{
@@ -499,23 +499,23 @@
   /* ---------- まとめ / ネタバラシ ---------- */
   .sum ul{ margin:0; padding:0; display:flex; flex-direction:column; gap:.85cqw; }
   .sum li{
-    list-style:none; font-size:1.5cqw; line-height:1.5;
+    list-style:none; font-size:1.66cqw; line-height:1.5;
     background:var(--panel); border-left:.32cqw solid var(--accent);
     border-radius:.7cqw; padding:.95cqw 1.5cqw;
   }
-  .teaser{ font-size:1.3cqw; color:var(--accent2); font-weight:700; }
+  .teaser{ font-size:1.44cqw; color:var(--accent2); font-weight:700; }
   .reveal-grid{ display:grid; grid-template-columns:1fr 1.1fr; gap:2cqw; align-items:start; }
   .reveal-grid ul{ margin:0; padding:0; display:flex; flex-direction:column; gap:.8cqw; }
   .reveal-grid li{
-    list-style:none; font-size:1.35cqw; line-height:1.5;
+    list-style:none; font-size:1.42cqw; line-height:1.5;
     background:var(--panel); border-left:.3cqw solid var(--accent2);
     border-radius:.6cqw; padding:.75cqw 1.3cqw;
   }
   .reveal-note{
-    font-size:1.4cqw; line-height:1.6; color:#ffd9a0;
+    font-size:1.48cqw; line-height:1.6; color:#ffd9a0;
     border-left:.3cqw solid var(--accent); padding-left:1.1cqw;
   }
-  .arrow-down{ font-size:2.4cqw; text-align:center; color:var(--accent); }
+  .arrow-down{ font-size:2.1cqw; text-align:center; color:var(--accent); }
 
   @media (prefers-reduced-motion: reduce){
     *{ transition-duration:.001ms !important; animation-duration:.001ms !important; animation-iteration-count:1 !important; }
@@ -523,8 +523,8 @@
 
 
   .pg{
-    position:absolute; left:5cqw; right:5cqw; top:13.8cqw; bottom:5.6cqw;
-    display:none; flex-direction:column; gap:.5cqw;
+    position:absolute; left:5cqw; right:5cqw; top:15cqw; bottom:5.65cqw;
+    display:none; flex-direction:column; gap:.3cqw;
   }
   #st4:checked ~ .stage .pg, #st5:checked ~ .stage .pg, #st6:checked ~ .stage .pg{ display:flex; }
   .prow{
@@ -533,16 +533,16 @@
   }
   .prow .cell{
     background:var(--panel); border:1px solid var(--line); border-radius:.9cqw;
-    padding:.5cqw 1cqw; display:flex; flex-direction:column; gap:.3cqw; min-width:0;
+    padding:.4cqw .9cqw; display:flex; flex-direction:column; gap:.25cqw; min-width:0;
   }
-  .prow .rules{ display:flex; flex-direction:column; gap:.45cqw; justify-content:center; min-width:0; }
-  .prow h3{ margin:0; font-size:1.05cqw; color:var(--accent); }
-  .caption2{ font-size:.9cqw; color:var(--muted); }
+  .prow .rules{ display:flex; flex-direction:column; gap:.32cqw; justify-content:center; min-width:0; }
+  .prow h3{ margin:0; font-size:1.1cqw; color:var(--accent); }
+  .caption2{ font-size:1cqw; color:var(--muted); }
   .pg .later{ opacity:0; transform:translateY(1.1cqw); pointer-events:none; }
   #st5:checked ~ .stage .pg .p5, #st6:checked ~ .stage .pg .p5,
   #st6:checked ~ .stage .pg .p6{ opacity:1; transform:none; pointer-events:auto; }
   .prow.brow{ order:-1; }
-  .prow .grp{ height:6.5cqw; }
+  .prow .grp{ height:6cqw; }
   .prow .grp .u > label{ width:3.6cqw; height:3.6cqw; font-size:1.9cqw; }
   .prow .grp .u > input{ bottom:1.3cqw; left:calc(var(--i) * 1.45cqw); width:1.1cqw; height:1.1cqw; }
 
@@ -570,9 +570,8 @@
 
     <section class="slide sl1 center">
       <div class="hero">🍪</div>
-      <h1>CSS Cookie Clicker を<br>1プレイぶん、積み上げて読む</h1>
-      <p class="big sub">checkbox と :checked と counter() と :has() だけで動くゲーム。<br>押しながら、動かしているCSSごと読んでいきます。</p>
-      <p class="hint">→ ← キー、または右下のボタンで進みます。</p>
+      <h1>CSS Cookie Clicker を<br>1プレイ分、積み上げて読む</h1>
+      <p class="big sub">押して動かしながら 仕掛けごと読んでいく<br>CSSだけのクッキークリッカー</p>
       <div class="nav">
         <div class="track"><i style="width:0%"></i></div>
         <span class="pos">1 / 14</span>
@@ -821,38 +820,38 @@
             <div class="c16 s1111 r5"><span class="b16">1111</span><span class="rt">+5</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x15_1"><label for="x15_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x15_2"><label for="x15_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x15_3"><label for="x15_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x15_4"><label for="x15_4">🍪</label></span></div></div>
         </div>
         <div class="callout16">
-          <pre class="code sm co0000">#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked))
-  &gt; .click-group.rate-1 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1000">#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked))
-  &gt; .click-group.rate-2 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0100">#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked))
-  &gt; .click-group.rate-2 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0010">#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked))
-  &gt; .click-group.rate-2 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0001">#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked)
-  &gt; .click-group.rate-2 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1100">#main:has(#item1:checked):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked))
-  &gt; .click-group.rate-3 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1010">#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked))
-  &gt; .click-group.rate-3 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1001">#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked)
-  &gt; .click-group.rate-3 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0110">#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked))
-  &gt; .click-group.rate-3 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0101">#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked)
-  &gt; .click-group.rate-3 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0011">#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked)
-  &gt; .click-group.rate-3 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1110">#main:has(#item1:checked):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked))
-  &gt; .click-group.rate-4 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1101">#main:has(#item1:checked):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked)
-  &gt; .click-group.rate-4 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1011">#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked)
-  &gt; .click-group.rate-4 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co0111">#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked)
-  &gt; .click-group.rate-4 { visibility: visible; }  /* いま有効な列 */</pre>
-          <pre class="code sm co1111">#main:has(#item1:checked):has(#item2:checked):has(#item3:checked):has(#item4:checked)
-  &gt; .click-group.rate-5 { visibility: visible; }  /* いま有効な列 */</pre>
+          <pre class="code sm co0000"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-1</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1000"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0100"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0010"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0001"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1100"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1010"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1001"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0110"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0101"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0011"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1110"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
+  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1101"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1011"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co0111"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+          <pre class="code sm co1111"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
+  <span class="sel">&gt; .click-group.rate-5</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
         </div>
         <div class="bal16"><span class="n"></span><span class="lb">枚（減算は省略）</span></div>
       </div>
@@ -872,19 +871,19 @@
       <div class="sassrow">
         <div>
           <h3>書いたもの：再帰mixin（抜粋）</h3>
-          <pre class="code sm">@mixin buyable-frontier(
-  $base, $item, $required, $max-rate,
-  $counts: (), $rate: 1, $earned: 0
+          <pre class="code sm"><span class="at">@mixin</span> buyable-frontier(
+  <span class="var">$base</span>, <span class="var">$item</span>, <span class="var">$required</span>, <span class="var">$max-rate</span>,
+  <span class="var">$counts</span>: (), <span class="var">$rate</span>: 1, <span class="var">$earned</span>: 0
 ) {
-  @if $earned &gt;= $required {
+  <span class="at">@if</span> <span class="var">$earned</span> &gt;= <span class="var">$required</span> {
     <span class="cmt">/* ちょうど買える境界にだけ出力 */</span>
-    #{$base}#{click-conditions($counts)} … {
+    <span class="sel">#{<span class="var">$base</span>}#{click-conditions(<span class="var">$counts</span>)} …</span> {
       <span class="prop">--purchase-background</span>: skyblue;
     }
-  } @else if $rate &lt;= $max-rate {
-    @for $clicks from 0 through $remaining {
-      @include buyable-frontier(…, $rate + 1,
-        $earned + $clicks * $rate);
+  } <span class="at">@else if</span> <span class="var">$rate</span> &lt;= <span class="var">$max-rate</span> {
+    <span class="at">@for</span> <span class="var">$clicks</span> from 0 through <span class="var">$remaining</span> {
+      <span class="at">@include</span> buyable-frontier(…, <span class="var">$rate</span> + 1,
+        <span class="var">$earned</span> + <span class="var">$clicks</span> * <span class="var">$rate</span>);
     }
   }
 }</pre>
@@ -1130,23 +1129,24 @@
     <div class="pg">
       <div class="prow">
         <div class="cell"><h3>rate-1 の群（1回 ＝ +1枚）</h3><div class="grp g1"><span class="u" style="--i:9"><input type="checkbox" id="pgA1"><label for="pgA1">🍪</label></span><span class="u" style="--i:8"><input type="checkbox" id="pgA2"><label for="pgA2">🍪</label></span><span class="u" style="--i:7"><input type="checkbox" id="pgA3"><label for="pgA3">🍪</label></span><span class="u" style="--i:6"><input type="checkbox" id="pgA4"><label for="pgA4">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="pgA5"><label for="pgA5">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="pgA6"><label for="pgA6">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="pgA7"><label for="pgA7">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgA8"><label for="pgA8">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgA9"><label for="pgA9">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgA10"><label for="pgA10">🍪</label></span><div class="caption">↑ 本物の checkbox 10個。🍪で左から ✓、✓を押せば解除。</div></div></div>
-        <div class="rules"><div class="rule rl-c1"><span class="rtitle">rate-1群で押された1個ごとに +1</span><span class="ok">有効</span><pre>.click-group.rate-1 &gt; input:checked  <span class="cm">/* 押されたinput */</span>
-{ counter-increment: cookies 1; }</pre></div></div>
+        <div class="rules"><div class="rule rl-c1"><span class="rtitle">rate-1群で押された1個ごとに +1</span><span class="ok">有効</span><pre><span class="sl">.click-group.rate-1 &gt; input:checked</span>  <span class="cm">/* 押されたinput */</span>
+{ <span class="pr">counter-increment</span>: cookies 1; }</pre></div></div>
       </div>
       <div class="prow later p5">
         <div class="cell"><h3>ショップ ／ item1・5枚</h3><div class="buyrow"><input type="checkbox" id="pg-buy" class="buychk"><label class="buy" for="pg-buy"><span class="t-yet">5枚たまると押せます</span><span class="t-ok">item1 を買う（−5枚）</span><span class="t-done">購入済み ✓</span></label></div><div class="caption2">← 購入の実体（#item1）</div></div>
-        <div class="rules"><div class="rule rl-buy"><span class="rtitle">5回以上押していて item1 未購入なら、買える見た目に</span><span class="ok">有効</span><pre>#main:has(&gt; .rate-1 &gt; input:nth-last-child(5):checked)  <span class="cm">/* 5回以上押した */</span>
-     :not(:has(#item1:checked)) .item1 .purchase { --purchase-background: skyblue; }</pre></div><div class="rule rl-minus"><span class="rtitle">item1 を買ったら −5</span><span class="ok">有効</span><pre>#item1:checked { counter-increment: cookies -5; }  <span class="cm">/* 購入のcheckbox */</span></pre></div></div>
+        <div class="rules"><div class="rule rl-buy"><span class="rtitle">5回以上押していて item1 未購入なら、買える見た目に</span><span class="ok">有効</span><pre><span class="sl">#main:has(&gt; .rate-1 &gt; input:nth-last-child(5):checked)</span>  <span class="cm">/* 5回以上押した */</span>
+  <span class="sl">:not(:has(#item1:checked)) .item1 .purchase</span>
+  { <span class="pr">--purchase-background</span>: skyblue; }</pre></div><div class="rule rl-minus"><span class="rtitle">item1 を買ったら −5</span><span class="ok">有効</span><pre><span class="sl">#item1:checked</span> { <span class="pr">counter-increment</span>: cookies -5; }  <span class="cm">/* 購入のcheckbox */</span></pre></div></div>
       </div>
       <div class="prow later p6">
         <div class="cell"><h3>rate-2 の群（1回 ＝ +2枚）</h3><div class="grp g2"><span class="u" style="--i:3"><input type="checkbox" id="pgB1"><label for="pgB1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgB2"><label for="pgB2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgB3"><label for="pgB3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgB4"><label for="pgB4">🍪</label></span></div></div>
-        <div class="rules"><div class="rule rl-sw"><span class="rtitle">item1 を買ったら rate-1 を無効に、rate-2 を有効に</span><span class="ok">有効</span><pre>#main:has(#item1:checked) .click-group.rate-1 { visibility: hidden; }
-#main:has(#item1:checked) .click-group.rate-2 { visibility: visible; }</pre></div><div class="rule rl-c2"><span class="rtitle">rate-2群で押された1個ごとに +2</span><span class="ok">有効</span><pre>.click-group.rate-2 &gt; input:checked
-{ counter-increment: cookies 2; }</pre></div></div>
+        <div class="rules"><div class="rule rl-sw"><span class="rtitle">item1 を買ったら rate-1 を無効に、rate-2 を有効に</span><span class="ok">有効</span><pre><span class="sl">#main:has(#item1:checked) .click-group.rate-1</span> { <span class="pr">visibility</span>: hidden; }
+<span class="sl">#main:has(#item1:checked) .click-group.rate-2</span> { <span class="pr">visibility</span>: visible; }</pre></div><div class="rule rl-c2"><span class="rtitle">rate-2群で押された1個ごとに +2</span><span class="ok">有効</span><pre><span class="sl">.click-group.rate-2 &gt; input:checked</span>
+{ <span class="pr">counter-increment</span>: cookies 2; }</pre></div></div>
       </div>
       <div class="prow brow">
         <div class="cell" style="justify-content:center;"><div class="balance"><span class="lb">残高</span><span class="n"></span><span class="unit">枚</span></div></div>
-        <div class="rules"><div class="rule rl-read"><span class="rtitle">counterの現在値をそのまま表示</span><span class="ok">有効</span><pre>#result::after { content: counter(cookies) "枚"; }  <span class="cm">/* 残高の表示先 */</span></pre></div></div>
+        <div class="rules"><div class="rule rl-read"><span class="rtitle">counterの現在値をそのまま表示</span><span class="ok">有効</span><pre><span class="sl">#result::after</span> { <span class="pr">content</span>: counter(cookies) "枚"; }  <span class="cm">/* 残高の表示先 */</span></pre></div></div>
       </div>
     </div>
 
