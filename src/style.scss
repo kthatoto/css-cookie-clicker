@@ -2,6 +2,15 @@
 
 $disappear: 500px;
 $cookie-size: 200px;
+$click-limit: 100;
+
+// (名前, 価格, 1クリックあたりの増分)
+$items: (
+  ("Special Cookie 1", 5, 1),
+  ("Special Cookie 2", 50, 10),
+  ("Special Cookie 3", 500, 100),
+  ("Special Cookie 4", 5000, 1000)
+);
 
 body {
   padding-top: 64px;
@@ -126,124 +135,200 @@ h1 {
   }
 }
 
-@function click-conditions($click-counts) {
-  $selector: "";
-  @for $rate from 1 through length($click-counts) {
-    $clicks: nth($click-counts, $rate);
-    @if $clicks > 0 {
-      $selector: $selector + ":has(> .click-group.rate-#{$rate} > input:nth-last-child(#{$clicks}):checked)";
+@function item-name($index) {
+  @return nth(nth($items, $index), 1);
+}
+
+@function item-price($index) {
+  @return nth(nth($items, $index), 2);
+}
+
+@function item-rate($index) {
+  @return nth(nth($items, $index), 3);
+}
+
+// 購入状態を 0/1 の並びで表す。#item1 が先頭。
+@function combo-name($flags) {
+  $name: "";
+  @each $flag in $flags {
+    $name: $name + $flag;
+  }
+  @return $name;
+}
+
+// その購入状態での1クリックあたりの増分。
+// 増分が全部違うので、購入した「数」ではなく「組み合わせ」で決まる。
+@function combo-rate($flags) {
+  $rate: 1;
+  @for $index from 1 through length($flags) {
+    @if nth($flags, $index) == 1 {
+      $rate: $rate + item-rate($index);
     }
   }
-  @return $selector;
+  @return $rate;
+}
+
+@function zeros($count) {
+  $out: ();
+  @for $i from 1 through $count {
+    $out: append($out, 0);
+  }
+  @return $out;
 }
 
 @function item-state-selector($selector, $index, $state) {
   @return $selector + ":has(#item#{$index}:#{$state})";
 }
 
-@function item-price($items, $index) {
-  @return nth(nth($items, $index), 2);
+// 押した回数の条件。0回の群はセレクタに出さない。
+@function click-conditions($counts) {
+  $selector: "";
+  @each $entry in $counts {
+    $combo: nth($entry, 1);
+    $clicks: nth($entry, 2);
+    @if $clicks > 0 {
+      $selector: $selector
+        + ":has(> .click-group.combo-#{$combo} > input:nth-last-child(#{$clicks}):checked)";
+    }
+  }
+  @return $selector;
 }
 
-$item-states: ("not(:checked)": 0, "checked": 1);
+// 群ごとの増分。群は購入状態と1対1なので 2^n 本ある。
+@mixin click-rates($index: 1, $flags: ()) {
+  @if $index > length($items) {
+    #main > .click-group.combo-#{combo-name($flags)} > input.increment:checked {
+      counter-increment: cookies combo-rate($flags);
+    }
+  } @else {
+    @include click-rates($index + 1, append($flags, 0));
+    @include click-rates($index + 1, append($flags, 1));
+  }
+}
 
-@mixin buyable-frontier(
-  $base-selector, $item-index, $required, $max-rate,
-  $click-counts: (), $rate: 1, $earned: 0, $min-rate: null
+// いまの購入状態に対応する群だけを押せるようにする。
+@mixin click-group-states($index: 1, $flags: (), $selector: "#main") {
+  @if $index > length($items) {
+    #{$selector} > .click-group.combo-#{combo-name($flags)} {
+      visibility: visible;
+      pointer-events: auto;
+    }
+  } @else {
+    @include click-group-states(
+      $index + 1, append($flags, 0), item-state-selector($selector, $index, "not(:checked)")
+    );
+    @include click-group-states(
+      $index + 1, append($flags, 1), item-state-selector($selector, $index, "checked")
+    );
+  }
+}
+
+// 群 1..$upto を上限まで押したときの最大収入。届かない枝を切るのに使う。
+@function max-earnings($chain, $upto) {
+  $sum: 0;
+  @for $index from 1 through $upto {
+    $sum: $sum + $click-limit * nth(nth($chain, $index), 2);
+  }
+  @return $sum;
+}
+
+// クリック数を配る。増分の大きい群から決めていく。
+// 増分の小さい群から回すと、ほとんど成立しない組み合わせを延々と踏むことになる。
+@mixin distribute-clicks(
+  $base-selector, $item-index, $required, $chain,
+  $index: length($chain), $earned: 0, $min-rate: null, $counts: ()
 ) {
-  @if $earned >= $required {
-    @if $earned - $min-rate < $required {
-      $click-selector: click-conditions($click-counts);
-      #{$base-selector}#{$click-selector} > #shop > #items > .item#{$item-index} > .purchase {
+  @if $index < 1 {
+    // ちょうど買える境界にだけ出力する
+    @if $min-rate != null and $earned >= $required and $earned - $min-rate < $required {
+      #{$base-selector}#{click-conditions($counts)}
+        > #shop > #items > .item#{$item-index} > .purchase {
         --purchase-background: skyblue;
         --purchase-cursor: pointer;
         --purchase-visibility: visible;
       }
     }
-  } @else if $rate <= $max-rate {
-    $remaining: $required - $earned;
-    $max-clicks: math.ceil(math.div($remaining, $rate));
+  } @else if $earned + max-earnings($chain, $index) >= $required {
+    $entry: nth($chain, $index);
+    $rate: nth($entry, 2);
+    $needed: if(
+      $earned < $required, math.ceil(math.div($required - $earned, $rate)), 0
+    );
+    $max-clicks: if($needed > $click-limit, $click-limit, $needed);
+
     @for $clicks from 0 through $max-clicks {
-      $next-counts: append($click-counts, $clicks);
-      $next-earned: $earned + $clicks * $rate;
-      $next-min-rate: if($min-rate == null and $clicks > 0, $rate, $min-rate);
-      @include buyable-frontier(
-        $base-selector, $item-index, $required, $max-rate,
-        $next-counts, $rate + 1, $next-earned, $next-min-rate
+      @include distribute-clicks(
+        $base-selector, $item-index, $required, $chain,
+        $index - 1, $earned + $clicks * $rate,
+        if($clicks > 0, $rate, $min-rate),
+        append($counts, (nth($entry, 1) $clicks), comma)
       );
     }
   }
 }
 
-@mixin click-rate-states(
-  $item-count, $index: 1, $selector: "#main", $purchased: 0
+// $current から $final まで、買う順番を全通りたどる。
+// 買う順番が違えば通る群も違うので、順番ごとに別のセレクタが要る。
+@mixin buyable-orders(
+  $base-selector, $item-index, $required, $final, $current, $chain
 ) {
-  @if $index > $item-count {
-    #{$selector} > .click-group.rate-#{$purchased + 1} {
-      visibility: visible;
-      pointer-events: auto;
-    }
+  @if $current == $final {
+    @include distribute-clicks($base-selector, $item-index, $required, $chain);
   } @else {
-    @each $state, $increment in $item-states {
-      $next-selector: item-state-selector($selector, $index, $state);
-      @include click-rate-states(
-        $item-count, $index + 1, $next-selector, $purchased + $increment
-      );
+    @for $next from 1 through length($items) {
+      @if nth($final, $next) == 1 and nth($current, $next) == 0 {
+        $state: set-nth($current, $next, 1);
+        @include buyable-orders(
+          $base-selector, $item-index, $required, $final, $state,
+          append($chain, (combo-name($state) combo-rate($state)), comma)
+        );
+      }
     }
   }
 }
 
-@mixin click-rates($item-count) {
-  @for $rate from 1 through $item-count + 1 {
-    #main > .click-group.rate-#{$rate} > input.increment:checked {
-      counter-increment: cookies $rate;
-    }
-  }
-
-  @include click-rate-states($item-count);
-}
-
+// 目標アイテムごとに、購入状態を全通り展開する。
 @mixin buyable-states(
-  $items, $item-index, $index: 1, $selector: "#main",
-  $required: 0, $purchased: 0
+  $item-index, $index: 1, $selector: "#main", $required: 0, $flags: ()
 ) {
   @if $index > length($items) {
-    @include buyable-frontier(
-      $selector, $item-index, $required, $purchased + 1
+    $start: zeros(length($items));
+    @include buyable-orders(
+      $selector, $item-index, $required, $flags, $start,
+      append((), (combo-name($start) combo-rate($start)), comma)
     );
   } @else if $index == $item-index {
-    $next-selector: item-state-selector($selector, $index, "not(:checked)");
     @include buyable-states(
-      $items, $item-index, $index + 1, $next-selector,
-      $required + item-price($items, $index), $purchased
+      $item-index, $index + 1,
+      item-state-selector($selector, $index, "not(:checked)"),
+      $required + item-price($index), append($flags, 0)
     );
   } @else {
-    @each $state, $increment in $item-states {
-      $next-selector: item-state-selector($selector, $index, $state);
-      @include buyable-states(
-        $items, $item-index, $index + 1, $next-selector,
-        $required + item-price($items, $index) * $increment,
-        $purchased + $increment
-      );
-    }
+    @include buyable-states(
+      $item-index, $index + 1,
+      item-state-selector($selector, $index, "not(:checked)"),
+      $required, append($flags, 0)
+    );
+    @include buyable-states(
+      $item-index, $index + 1,
+      item-state-selector($selector, $index, "checked"),
+      $required + item-price($index), append($flags, 1)
+    );
   }
 }
 
-@mixin shop-items($items) {
+@mixin shop-items {
   $game-clear-condition: "";
   @for $index from 1 through length($items) {
-    $item: nth($items, $index);
-    $item-name: nth($item, 1);
-    $price: item-price($items, $index);
-
     #shop > #items > .item#{$index} > span::after {
-      content: $item-name + "：" + $price + "枚（クリック +1枚）";
+      content: item-name($index) + "：" + item-price($index) + "枚（クリック +"
+        + item-rate($index) + "枚）";
     }
 
-    @include buyable-states($items, $index);
+    @include buyable-states($index);
 
     #item#{$index}:checked {
-      counter-increment: cookies -#{$price};
+      counter-increment: cookies -#{item-price($index)};
     }
     #main:has(#item#{$index}:checked) > #shop > #items > .item#{$index} {
       > .purchase > span::after {
@@ -258,12 +343,6 @@ $item-states: ("not(:checked)": 0, "checked": 1);
   }
 }
 
-$items: (
-  ("Special Cookie 1", 5),
-  ("Special Cookie 2", 10),
-  ("Special Cookie 3", 10),
-  ("Special Cookie 4", 15)
-);
-
-@include click-rates(length($items));
-@include shop-items($items);
+@include click-rates;
+@include click-group-states;
+@include shop-items;

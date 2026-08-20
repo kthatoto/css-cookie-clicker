@@ -434,11 +434,22 @@
   #st11:checked ~ .stage .st16:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:checked) .s1111 .b16{
     background:var(--accent); color:#241708;
   }
-  .st16 .r1 .u > input:checked{ counter-increment: bal16 1; }
-  .st16 .r2 .u > input:checked{ counter-increment: bal16 2; }
-  .st16 .r3 .u > input:checked{ counter-increment: bal16 3; }
-  .st16 .r4 .u > input:checked{ counter-increment: bal16 4; }
-  .st16 .r5 .u > input:checked{ counter-increment: bal16 5; }
+  .st16 .s0000 .u > input:checked{ counter-increment: bal16 1; }
+  .st16 .s0001 .u > input:checked{ counter-increment: bal16 1001; }
+  .st16 .s0010 .u > input:checked{ counter-increment: bal16 101; }
+  .st16 .s0011 .u > input:checked{ counter-increment: bal16 1101; }
+  .st16 .s0100 .u > input:checked{ counter-increment: bal16 11; }
+  .st16 .s0101 .u > input:checked{ counter-increment: bal16 1011; }
+  .st16 .s0110 .u > input:checked{ counter-increment: bal16 111; }
+  .st16 .s0111 .u > input:checked{ counter-increment: bal16 1111; }
+  .st16 .s1000 .u > input:checked{ counter-increment: bal16 2; }
+  .st16 .s1001 .u > input:checked{ counter-increment: bal16 1002; }
+  .st16 .s1010 .u > input:checked{ counter-increment: bal16 102; }
+  .st16 .s1011 .u > input:checked{ counter-increment: bal16 1102; }
+  .st16 .s1100 .u > input:checked{ counter-increment: bal16 12; }
+  .st16 .s1101 .u > input:checked{ counter-increment: bal16 1012; }
+  .st16 .s1110 .u > input:checked{ counter-increment: bal16 112; }
+  .st16 .s1111 .u > input:checked{ counter-increment: bal16 1112; }
   .callout16{ min-height:4.6cqw; }
   .callout16 > .code{ display:none; margin:0; }
   .st16:has(#i1:not(:checked)):has(#i2:not(:checked)):has(#i3:not(:checked)):has(#i4:not(:checked)) .co0000{ display:block; }
@@ -457,15 +468,6 @@
   .st16:has(#i1:checked):has(#i2:not(:checked)):has(#i3:checked):has(#i4:checked) .co1011{ display:block; }
   .st16:has(#i1:not(:checked)):has(#i2:checked):has(#i3:checked):has(#i4:checked) .co0111{ display:block; }
   .st16:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:checked) .co1111{ display:block; }
-  .clear16{
-    position:absolute; inset:0; z-index:5;
-    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1cqw;
-    background:rgba(10,6,3,.86); opacity:0; pointer-events:none;
-    transition:opacity .28s ease;
-  }
-  .clear16 .t{ font-size:7cqw; font-weight:800; color:#fff; }
-  .clear16 .s{ font-size:1.5cqw; color:var(--muted); }
-  .sl11:has(#i1:checked):has(#i2:checked):has(#i3:checked):has(#i4:checked) .clear16{ opacity:1; }
 
   /* ---------- Sass壁 ---------- */
   .sassrow{ display:grid; grid-template-columns:1fr 1.15fr; gap:1.8cqw; flex:1; min-height:0; }
@@ -571,7 +573,7 @@
     <section class="slide sl1 center">
       <div class="hero">🍪</div>
       <h1>CSSだけでクッキーのゲームを作る</h1>
-      <p class="big sub"><span class="kw">&lt;checkbox&gt;</span> 504個 ／ CSS 24,352行 ／ JavaScript 0行</p>
+      <p class="big sub"><span class="kw">&lt;checkbox&gt;</span> 1,604個 ／ CSS 244,722行 ／ JavaScript 0行</p>
       <div class="nav">
         <div class="track"><i style="width:0%"></i></div>
         <span class="pos">1 / 14</span>
@@ -621,7 +623,7 @@
 
     <section class="slide sl4">
       <span class="tag">STEP 3</span>
-      <h2>rate-1 の群。右がそれを動かすCSSです</h2>
+      <h2>combo-0000 の群。右がそれを動かすCSSです</h2>
       <p>🍪を10回。押すたびに右のルールが<b>有効</b>になります。</p>
       <div class="nav">
         <label class="btn" for="st3">◀ 前へ</label>
@@ -645,8 +647,8 @@
     </section>
     <section class="slide sl6">
       <span class="tag">STEP 5</span>
-      <h2>rate-2 の群が増えた。過去の分は +1 のまま</h2>
-      <p>ここからは1回 +2。切替ルールが有効になり、rate-1 は無効化。</p>
+      <h2>combo-1000 の群に切り替わる。過去の分は +1 のまま</h2>
+      <p>ここからは1回 +2。切替ルールが有効になり、combo-0000 は閉じます。</p>
       <div class="nav">
         <label class="btn" for="st5">◀ 前へ</label>
         <div class="track"><i style="width:38%"></i></div>
@@ -738,44 +740,43 @@
 
     <section class="slide sl10">
       <span class="tag">STEP 6</span>
-      <h2>同じ10枚でも、押し方ごとに別のCSSが要る</h2>
-      <p>CSSに「10枚あるか」を計算する手段はないので、<b>押し方1通りにつきセレクタ1本</b>。</p>
+      <h2>同じ50枚でも、押し方ごとに別のCSSが要る</h2>
+      <p>CSSに「50枚あるか」を計算する手段はないので、<b>押し方1通りにつきセレクタ1本</b>。</p>
       <input class="pick-radio" type="radio" name="dist" id="d1" checked>
       <input class="pick-radio" type="radio" name="dist" id="d2">
       <input class="pick-radio" type="radio" name="dist" id="d3">
       <input class="pick-radio" type="radio" name="dist" id="d4">
       <div class="dist-pick">
-        <label for="d1">1111111111</label>
-        <label for="d2">111111112</label>
-        <label for="d3">11111122</label>
-        <label for="d4">112222</label>
+        <label for="d1">1×50</label>
+        <label for="d2">1×48 + 2×1</label>
+        <label for="d3">1×30 + 2×10</label>
+        <label for="d4">2×25</label>
       </div>
       <div class="dist-out">
         <div class="o1">
-          <div class="chips"><span class="chip">1枚 × 10回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
+          <div class="chips"><span class="chip">1枚 × 50回</span><span class="chip eq">＝</span><span class="chip total">50枚 → item2（50枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
-     <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked)</span>  <span class="cmt">/* ← 1枚の群を10回 */</span>
+     <span class="has">:has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(50):checked)</span>  <span class="cmt">/* ← +1の群を50回 */</span>
   .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
         <div class="o2">
-          <div class="chips"><span class="chip">1枚 × 8回</span><span class="chip eq">＋</span><span class="chip">2枚 × 1回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
+          <div class="chips"><span class="chip">1枚 × 48回</span><span class="chip eq">＋</span><span class="chip">2枚 × 1回</span><span class="chip eq">＝</span><span class="chip total">50枚 → item2（50枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
-     <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked)</span>  <span class="cmt">/* ← 1枚の群を8回 */</span>
-     <span class="has">:has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked)</span>  <span class="cmt">/* ← 2枚の群を1回 */</span>
+     <span class="has">:has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(48):checked)</span>  <span class="cmt">/* ← +1の群を48回 */</span>
+     <span class="has">:has(&gt; .click-group.combo-1000 &gt; input:nth-last-child(1):checked)</span>  <span class="cmt">/* ← +2の群を1回 */</span>
   .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
         <div class="o3">
-          <div class="chips"><span class="chip">1枚 × 6回</span><span class="chip eq">＋</span><span class="chip">2枚 × 2回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
+          <div class="chips"><span class="chip">1枚 × 30回</span><span class="chip eq">＋</span><span class="chip">2枚 × 10回</span><span class="chip eq">＝</span><span class="chip total">50枚 → item2（50枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
-     <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked)</span>  <span class="cmt">/* ← 1枚の群を6回 */</span>
-     <span class="has">:has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked)</span>  <span class="cmt">/* ← 2枚の群を2回 */</span>
+     <span class="has">:has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(30):checked)</span>  <span class="cmt">/* ← +1の群を30回 */</span>
+     <span class="has">:has(&gt; .click-group.combo-1000 &gt; input:nth-last-child(10):checked)</span>  <span class="cmt">/* ← +2の群を10回 */</span>
   .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
         <div class="o4">
-          <div class="chips"><span class="chip">1枚 × 2回</span><span class="chip eq">＋</span><span class="chip">2枚 × 4回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
+          <div class="chips"><span class="chip">2枚 × 25回</span><span class="chip eq">＝</span><span class="chip total">50枚 → item2（50枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
-     <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked)</span>  <span class="cmt">/* ← 1枚の群を2回 */</span>
-     <span class="has">:has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked)</span>  <span class="cmt">/* ← 2枚の群を4回 */</span>
+     <span class="has">:has(&gt; .click-group.combo-1000 &gt; input:nth-last-child(25):checked)</span>  <span class="cmt">/* ← +2の群を25回 */</span>
   .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
       </div>
@@ -792,7 +793,7 @@
     <section class="slide sl11">
       <span class="tag">STEP 7</span>
       <h2>状態は16通り。ぜんぶ最初から置いてある</h2>
-      <p>itemを押すと<b>有効な列が切り替わる</b>だけ。どの列の🍪も、その状態のときだけ押せます。順番は関係ありません。</p>
+      <p>増分が組み合わせで決まるので、<b>群も16通り置いてあります</b>。itemを押すと有効な群が切り替わるだけ。押した分は元の群に残ります。</p>
       <div class="st16">
         <div class="itrow">
           <span class="it"><input type="checkbox" id="i1"><label for="i1">item1</label></span>
@@ -801,60 +802,59 @@
           <span class="it"><input type="checkbox" id="i4"><label for="i4">item4</label></span>
         </div>
         <div class="grid16">
-            <div class="c16 s0000 r1"><span class="b16">0000</span><span class="rt">+1</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x0_1"><label for="x0_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x0_2"><label for="x0_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x0_3"><label for="x0_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x0_4"><label for="x0_4">🍪</label></span></div></div>
-            <div class="c16 s1000 r2"><span class="b16">1000</span><span class="rt">+2</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x1_1"><label for="x1_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x1_2"><label for="x1_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x1_3"><label for="x1_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x1_4"><label for="x1_4">🍪</label></span></div></div>
-            <div class="c16 s0100 r2"><span class="b16">0100</span><span class="rt">+2</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x2_1"><label for="x2_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x2_2"><label for="x2_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x2_3"><label for="x2_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x2_4"><label for="x2_4">🍪</label></span></div></div>
-            <div class="c16 s0010 r2"><span class="b16">0010</span><span class="rt">+2</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x3_1"><label for="x3_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x3_2"><label for="x3_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x3_3"><label for="x3_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x3_4"><label for="x3_4">🍪</label></span></div></div>
-            <div class="c16 s0001 r2"><span class="b16">0001</span><span class="rt">+2</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x4_1"><label for="x4_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x4_2"><label for="x4_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x4_3"><label for="x4_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x4_4"><label for="x4_4">🍪</label></span></div></div>
-            <div class="c16 s1100 r3"><span class="b16">1100</span><span class="rt">+3</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x5_1"><label for="x5_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x5_2"><label for="x5_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x5_3"><label for="x5_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x5_4"><label for="x5_4">🍪</label></span></div></div>
-            <div class="c16 s1010 r3"><span class="b16">1010</span><span class="rt">+3</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x6_1"><label for="x6_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x6_2"><label for="x6_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x6_3"><label for="x6_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x6_4"><label for="x6_4">🍪</label></span></div></div>
-            <div class="c16 s1001 r3"><span class="b16">1001</span><span class="rt">+3</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x7_1"><label for="x7_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x7_2"><label for="x7_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x7_3"><label for="x7_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x7_4"><label for="x7_4">🍪</label></span></div></div>
-            <div class="c16 s0110 r3"><span class="b16">0110</span><span class="rt">+3</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x8_1"><label for="x8_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x8_2"><label for="x8_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x8_3"><label for="x8_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x8_4"><label for="x8_4">🍪</label></span></div></div>
-            <div class="c16 s0101 r3"><span class="b16">0101</span><span class="rt">+3</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x9_1"><label for="x9_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x9_2"><label for="x9_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x9_3"><label for="x9_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x9_4"><label for="x9_4">🍪</label></span></div></div>
-            <div class="c16 s0011 r3"><span class="b16">0011</span><span class="rt">+3</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x10_1"><label for="x10_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x10_2"><label for="x10_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x10_3"><label for="x10_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x10_4"><label for="x10_4">🍪</label></span></div></div>
-            <div class="c16 s1110 r4"><span class="b16">1110</span><span class="rt">+4</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x11_1"><label for="x11_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x11_2"><label for="x11_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x11_3"><label for="x11_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x11_4"><label for="x11_4">🍪</label></span></div></div>
-            <div class="c16 s1101 r4"><span class="b16">1101</span><span class="rt">+4</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x12_1"><label for="x12_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x12_2"><label for="x12_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x12_3"><label for="x12_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x12_4"><label for="x12_4">🍪</label></span></div></div>
-            <div class="c16 s1011 r4"><span class="b16">1011</span><span class="rt">+4</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x13_1"><label for="x13_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x13_2"><label for="x13_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x13_3"><label for="x13_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x13_4"><label for="x13_4">🍪</label></span></div></div>
-            <div class="c16 s0111 r4"><span class="b16">0111</span><span class="rt">+4</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x14_1"><label for="x14_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x14_2"><label for="x14_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x14_3"><label for="x14_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x14_4"><label for="x14_4">🍪</label></span></div></div>
-            <div class="c16 s1111 r5"><span class="b16">1111</span><span class="rt">+5</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x15_1"><label for="x15_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x15_2"><label for="x15_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x15_3"><label for="x15_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x15_4"><label for="x15_4">🍪</label></span></div></div>
+            <div class="c16 s0000"><span class="b16">0000</span><span class="rt">+1</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x0_1"><label for="x0_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x0_2"><label for="x0_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x0_3"><label for="x0_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x0_4"><label for="x0_4">🍪</label></span></div></div>
+            <div class="c16 s1000"><span class="b16">1000</span><span class="rt">+2</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x1_1"><label for="x1_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x1_2"><label for="x1_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x1_3"><label for="x1_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x1_4"><label for="x1_4">🍪</label></span></div></div>
+            <div class="c16 s0100"><span class="b16">0100</span><span class="rt">+11</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x2_1"><label for="x2_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x2_2"><label for="x2_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x2_3"><label for="x2_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x2_4"><label for="x2_4">🍪</label></span></div></div>
+            <div class="c16 s0010"><span class="b16">0010</span><span class="rt">+101</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x3_1"><label for="x3_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x3_2"><label for="x3_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x3_3"><label for="x3_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x3_4"><label for="x3_4">🍪</label></span></div></div>
+            <div class="c16 s0001"><span class="b16">0001</span><span class="rt">+1001</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x4_1"><label for="x4_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x4_2"><label for="x4_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x4_3"><label for="x4_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x4_4"><label for="x4_4">🍪</label></span></div></div>
+            <div class="c16 s1100"><span class="b16">1100</span><span class="rt">+12</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x5_1"><label for="x5_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x5_2"><label for="x5_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x5_3"><label for="x5_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x5_4"><label for="x5_4">🍪</label></span></div></div>
+            <div class="c16 s1010"><span class="b16">1010</span><span class="rt">+102</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x6_1"><label for="x6_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x6_2"><label for="x6_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x6_3"><label for="x6_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x6_4"><label for="x6_4">🍪</label></span></div></div>
+            <div class="c16 s1001"><span class="b16">1001</span><span class="rt">+1002</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x7_1"><label for="x7_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x7_2"><label for="x7_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x7_3"><label for="x7_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x7_4"><label for="x7_4">🍪</label></span></div></div>
+            <div class="c16 s0110"><span class="b16">0110</span><span class="rt">+111</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x8_1"><label for="x8_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x8_2"><label for="x8_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x8_3"><label for="x8_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x8_4"><label for="x8_4">🍪</label></span></div></div>
+            <div class="c16 s0101"><span class="b16">0101</span><span class="rt">+1011</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x9_1"><label for="x9_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x9_2"><label for="x9_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x9_3"><label for="x9_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x9_4"><label for="x9_4">🍪</label></span></div></div>
+            <div class="c16 s0011"><span class="b16">0011</span><span class="rt">+1101</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x10_1"><label for="x10_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x10_2"><label for="x10_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x10_3"><label for="x10_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x10_4"><label for="x10_4">🍪</label></span></div></div>
+            <div class="c16 s1110"><span class="b16">1110</span><span class="rt">+112</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x11_1"><label for="x11_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x11_2"><label for="x11_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x11_3"><label for="x11_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x11_4"><label for="x11_4">🍪</label></span></div></div>
+            <div class="c16 s1101"><span class="b16">1101</span><span class="rt">+1012</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x12_1"><label for="x12_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x12_2"><label for="x12_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x12_3"><label for="x12_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x12_4"><label for="x12_4">🍪</label></span></div></div>
+            <div class="c16 s1011"><span class="b16">1011</span><span class="rt">+1102</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x13_1"><label for="x13_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x13_2"><label for="x13_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x13_3"><label for="x13_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x13_4"><label for="x13_4">🍪</label></span></div></div>
+            <div class="c16 s0111"><span class="b16">0111</span><span class="rt">+1111</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x14_1"><label for="x14_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x14_2"><label for="x14_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x14_3"><label for="x14_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x14_4"><label for="x14_4">🍪</label></span></div></div>
+            <div class="c16 s1111"><span class="b16">1111</span><span class="rt">+1112</span><div class="mstk"><span class="u" style="--i:3"><input type="checkbox" id="x15_1"><label for="x15_1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="x15_2"><label for="x15_2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="x15_3"><label for="x15_3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="x15_4"><label for="x15_4">🍪</label></span></div></div>
         </div>
         <div class="callout16">
           <pre class="code sm co0000"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-1</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0000</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1000"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1000</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0100"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0100</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0010"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0010</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0001"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-2</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0001</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1100"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1100</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1010"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1010</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1001"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1001</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0110"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0110</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0101"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0101</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0011"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-3</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0011</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1110"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:not(:checked))</span>
-  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1110</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1101"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:not(:checked))</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1101</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1011"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1011</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co0111"><span class="sel">#main</span><span class="has">:has(#item1:not(:checked))</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-4</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-0111</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
           <pre class="code sm co1111"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:checked)</span><span class="has">:has(#item3:checked)</span><span class="has">:has(#item4:checked)</span>
-  <span class="sel">&gt; .click-group.rate-5</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
+  <span class="sel">&gt; .click-group.combo-1111</span> { <span class="prop">visibility</span>: visible; }  <span class="cmt">/* いま有効な列 */</span></pre>
         </div>
         <div class="bal16"><span class="n"></span><span class="lb">枚（減算は省略）</span></div>
       </div>
-      <div class="clear16"><span class="t">クリア🎉</span><span class="s">4つ全部 checked ＝ :has() 4連結（本物のゲームクリアと同じ実装）</span></div>
       <div class="nav">
         <label class="btn" for="st10">◀ 前へ</label>
         <div class="track"><i style="width:77%"></i></div>
@@ -870,18 +870,20 @@
       <div class="sassrow">
         <div>
           <h3>書いたもの：再帰mixin（抜粋）</h3>
-          <pre class="code sm"><span class="at">@mixin</span> buyable-frontier(
-  <span class="var">$base</span>, <span class="var">$item</span>, <span class="var">$required</span>, <span class="var">$max-rate</span>,
-  <span class="var">$counts</span>: (), <span class="var">$rate</span>: 1, <span class="var">$earned</span>: 0
+          <pre class="code sm"><span class="at">@mixin</span> distribute-clicks(
+  <span class="var">$base</span>, <span class="var">$item</span>, <span class="var">$required</span>, <span class="var">$chain</span>,
+  <span class="var">$index</span>: length(<span class="var">$chain</span>), <span class="var">$earned</span>: 0, <span class="var">$counts</span>: ()
 ) {
-  <span class="at">@if</span> <span class="var">$earned</span> &gt;= <span class="var">$required</span> {
+  <span class="at">@if</span> <span class="var">$index</span> &lt; 1 {
     <span class="cmt">/* ちょうど買える境界にだけ出力 */</span>
     <span class="sel">#{<span class="var">$base</span>}#{click-conditions(<span class="var">$counts</span>)} …</span> {
-      <span class="prop">--purchase-background</span>: skyblue;
+      <span class="prop">--purchase-visibility</span>: visible;
     }
-  } <span class="at">@else if</span> <span class="var">$rate</span> &lt;= <span class="var">$max-rate</span> {
-    <span class="at">@for</span> <span class="var">$clicks</span> from 0 through <span class="var">$remaining</span> {
-      <span class="at">@include</span> buyable-frontier(…, <span class="var">$rate</span> + 1,
+  } <span class="at">@else if</span> <span class="var">$earned</span> + max-earnings(<span class="var">$chain</span>, <span class="var">$index</span>)
+             &gt;= <span class="var">$required</span> {
+    <span class="cmt">/* 残りを上限まで押しても届かない枝は捨てる */</span>
+    <span class="at">@for</span> <span class="var">$clicks</span> from 0 through … {
+      <span class="at">@include</span> distribute-clicks(…, <span class="var">$index</span> - 1,
         <span class="var">$earned</span> + <span class="var">$clicks</span> * <span class="var">$rate</span>);
     }
   }
@@ -890,178 +892,22 @@
         <div>
           <h3>出てきたもの：style.css</h3>
           <div class="wall">
-            <div class="wall-inner">#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+            <div class="wall-inner">#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(5):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0110 &gt; input:nth-last-child(44):checked):has(&gt; .click-group.combo-0100 &gt; input:nth-last-child(52):checked):has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(99):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0111 &gt; input:nth-last-child(1):checked):has(&gt; .click-group.combo-0110 &gt; input:nth-last-child(38):checked):has(&gt; .click-group.combo-0100 &gt; input:nth-last-child(21):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0111 &gt; input:nth-last-child(3):checked):has(&gt; .click-group.combo-0110 &gt; input:nth-last-child(13):checked):has(&gt; .click-group.combo-0100 &gt; input:nth-last-child(68):checked):has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(31):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0111 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.combo-0110 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.combo-0100 &gt; input:nth-last-child(17):checked):has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(36):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0110 &gt; input:nth-last-child(33):checked):has(&gt; .click-group.combo-0010 &gt; input:nth-last-child(19):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0111 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.combo-0110 &gt; input:nth-last-child(17):checked):has(&gt; .click-group.combo-0010 &gt; input:nth-last-child(14):checked):has(&gt; .click-group.combo-0000 &gt; input:nth-last-child(32):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
 
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item2 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:not(:checked)):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:not(:checked)):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item3 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }
-
-#main:has(#item1:checked):has(#item2:not(:checked)):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.rate-1 &gt; input:nth-last-child(4):checked):has(&gt; .click-group.rate-2 &gt; input:nth-last-child(3):checked) &gt; #shop &gt; #items &gt; .item4 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }</div>
-            <span class="stamp">実物は 24,352 行</span>
+#main:has(#item1:not(:checked)):has(#item2:checked):has(#item3:checked):has(#item4:checked):has(&gt; .click-group.combo-0111 &gt; input:nth-last-child(2):checked):has(&gt; .click-group.combo-0101 &gt; input:nth-last-child(3):checked):has(&gt; .click-group.combo-0001 &gt; input:nth-last-child(1):checked) &gt; #shop &gt; #items &gt; .item1 &gt; .purchase { --purchase-background: skyblue; --purchase-cursor: pointer; --purchase-visibility: visible; }</div>
+            <span class="stamp">実物は 244,722 行</span>
           </div>
         </div>
       </div>
@@ -1081,7 +927,7 @@
         <ul>
           <li>🍪 checkbox 1個 ＝ 押した記憶。持てる情報はこれだけ。</li>
           <li>📚 100個重ねて、手前から消費 ＝ 連続クリック。</li>
-          <li>🔢 残高は counter の数え直し。過去の分の単価は変わらない。</li>
+          <li>🔢 残高は counter の数え直し。単価は購入の<b>組み合わせ</b>で決まるので、群を16通り持って過去の分を守る。</li>
           <li>🧩 買える判定も切替も、:has() で「形」を見るだけ。</li>
           <li>🧨 計算はしない。全状態を先に書いておく。だから Sass で生成する。</li>
         </ul>
@@ -1127,20 +973,20 @@
 
     <div class="pg">
       <div class="prow">
-        <div class="cell"><h3>rate-1 の群（1回 ＝ +1枚）</h3><div class="grp g1"><span class="u" style="--i:9"><input type="checkbox" id="pgA1"><label for="pgA1">🍪</label></span><span class="u" style="--i:8"><input type="checkbox" id="pgA2"><label for="pgA2">🍪</label></span><span class="u" style="--i:7"><input type="checkbox" id="pgA3"><label for="pgA3">🍪</label></span><span class="u" style="--i:6"><input type="checkbox" id="pgA4"><label for="pgA4">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="pgA5"><label for="pgA5">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="pgA6"><label for="pgA6">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="pgA7"><label for="pgA7">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgA8"><label for="pgA8">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgA9"><label for="pgA9">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgA10"><label for="pgA10">🍪</label></span></div></div>
-        <div class="rules"><div class="rule rl-c1"><span class="rtitle">rate-1群で押された1個ごとに +1</span><span class="ok">有効</span><pre><span class="sl">.click-group.rate-1 &gt; input:checked</span>  <span class="cm">/* 押されたinput */</span>
+        <div class="cell"><h3>combo-0000 の群（1回 ＝ +1枚）</h3><div class="grp g1"><span class="u" style="--i:9"><input type="checkbox" id="pgA1"><label for="pgA1">🍪</label></span><span class="u" style="--i:8"><input type="checkbox" id="pgA2"><label for="pgA2">🍪</label></span><span class="u" style="--i:7"><input type="checkbox" id="pgA3"><label for="pgA3">🍪</label></span><span class="u" style="--i:6"><input type="checkbox" id="pgA4"><label for="pgA4">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="pgA5"><label for="pgA5">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="pgA6"><label for="pgA6">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="pgA7"><label for="pgA7">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgA8"><label for="pgA8">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgA9"><label for="pgA9">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgA10"><label for="pgA10">🍪</label></span></div></div>
+        <div class="rules"><div class="rule rl-c1"><span class="rtitle">combo-0000 の群で押された1個ごとに +1</span><span class="ok">有効</span><pre><span class="sl">.click-group.combo-0000 &gt; input:checked</span>  <span class="cm">/* 押されたinput */</span>
 { <span class="pr">counter-increment</span>: cookies 1; }</pre></div></div>
       </div>
       <div class="prow later p5">
         <div class="cell"><h3>ショップ ／ item1・5枚</h3><div class="buyrow"><input type="checkbox" id="pg-buy" class="buychk"><label class="buy" for="pg-buy"><span class="t-yet">5枚たまると押せます</span><span class="t-ok">item1 を買う（−5枚）</span><span class="t-done">購入済み ✓</span></label></div><div class="caption2">← 購入の実体（#item1）。本物はボタンに重ねてある</div></div>
         <div class="rules"><div class="rule rl-buy"><span class="rtitle">購入の checkbox は隠してある。5回以上押していて item1 未購入のときだけ出す</span><span class="ok">有効</span><pre><span class="sl">.item1 .purchase &gt; input</span> { <span class="pr">visibility</span>: hidden; }  <span class="cm">/* ふだんは押せない */</span>
-<span class="sl">#main:has(&gt; .rate-1 &gt; input:nth-last-child(5):checked)</span>  <span class="cm">/* 5回以上押した */</span>
+<span class="sl">#main:has(&gt; .combo-0000 &gt; input:nth-last-child(5):checked)</span>  <span class="cm">/* 5回以上押した */</span>
   <span class="sl">:not(:has(#item1:checked)) .item1 .purchase &gt; input</span> { <span class="pr">visibility</span>: visible; }</pre></div><div class="rule rl-minus"><span class="rtitle">item1 を買ったら −5</span><span class="ok">有効</span><pre><span class="sl">#item1:checked</span> { <span class="pr">counter-increment</span>: cookies -5; }  <span class="cm">/* 購入のcheckbox */</span></pre></div></div>
       </div>
       <div class="prow later p6">
-        <div class="cell"><h3>rate-2 の群（1回 ＝ +2枚）</h3><div class="grp g2"><span class="u" style="--i:3"><input type="checkbox" id="pgB1"><label for="pgB1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgB2"><label for="pgB2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgB3"><label for="pgB3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgB4"><label for="pgB4">🍪</label></span></div></div>
-        <div class="rules"><div class="rule rl-sw"><span class="rtitle">item1 を買ったら rate-1 を無効に、rate-2 を有効に</span><span class="ok">有効</span><pre><span class="sl">#main:has(#item1:checked) .click-group.rate-1</span> { <span class="pr">visibility</span>: hidden; }
-<span class="sl">#main:has(#item1:checked) .click-group.rate-2</span> { <span class="pr">visibility</span>: visible; }</pre></div><div class="rule rl-c2"><span class="rtitle">rate-2群で押された1個ごとに +2</span><span class="ok">有効</span><pre><span class="sl">.click-group.rate-2 &gt; input:checked</span>
+        <div class="cell"><h3>combo-1000 の群（1回 ＝ +2枚）</h3><div class="grp g2"><span class="u" style="--i:3"><input type="checkbox" id="pgB1"><label for="pgB1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgB2"><label for="pgB2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgB3"><label for="pgB3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgB4"><label for="pgB4">🍪</label></span></div></div>
+        <div class="rules"><div class="rule rl-sw"><span class="rtitle">item1 を買ったら combo-0000 を閉じて combo-1000 を開く</span><span class="ok">有効</span><pre><span class="sl">#main:has(#item1:checked) .click-group.combo-0000</span> { <span class="pr">visibility</span>: hidden; }
+<span class="sl">#main:has(#item1:checked) .click-group.combo-1000</span> { <span class="pr">visibility</span>: visible; }</pre></div><div class="rule rl-c2"><span class="rtitle">combo-1000 の群で押された1個ごとに +2</span><span class="ok">有効</span><pre><span class="sl">.click-group.combo-1000 &gt; input:checked</span>
 { <span class="pr">counter-increment</span>: cookies 2; }</pre></div></div>
       </div>
       <div class="prow brow">
