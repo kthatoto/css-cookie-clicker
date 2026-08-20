@@ -1,9 +1,13 @@
 - const click_limit = 100
-- const item_count = 4
-- const click_rates = Array.from({ length: item_count + 1 }, (_, index) => index + 1)
+- const item_rates = [1, 10, 100, 1000]
+- const item_count = item_rates.length
+- const combo_name = (flags) => flags.join("")
+- const combo_rate = (flags) => 1 + flags.reduce((sum, flag, index) => sum + (flag ? item_rates[index] : 0), 0)
+- const combos = Array.from({ length: Math.pow(2, item_count) }, (_, mask) => Array.from({ length: item_count }, (_, index) => (mask >> (item_count - 1 - index)) & 1))
 
-mixin click-group(rate)
-  .click-group(class="rate-" + rate data-rate=rate)
+mixin click-group(flags)
+  - const rate = combo_rate(flags)
+  .click-group(class="combo-" + combo_name(flags) data-rate=rate)
     each _, index in Array(click_limit)
       input.increment(
         type="checkbox"
@@ -32,8 +36,8 @@ html(lang="ja")
     #main
       span#cookie 🍪
 
-      each rate in click_rates
-        +click-group(rate)
+      each flags in combos
+        +click-group(flags)
 
       #shop
         div ショップ
