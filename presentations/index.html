@@ -121,18 +121,18 @@
   .pos{ font-size:1.22cqw; color:var(--muted); font-variant-numeric:tabular-nums; }
 
   /* ---------- クリック群（--i はDOM逆順。✓は左から埋まる） ---------- */
-  .grp{ position:relative; width:100%; height:11.4cqw; }
+  .grp{ position:relative; width:100%; height:19.5cqw; }
   .grp .u > input{
-    position:absolute; bottom:2.2cqw; left:calc(var(--i) * 1.9cqw);
-    width:1.5cqw; height:1.5cqw; margin:0; accent-color:var(--accent);
+    position:absolute; bottom:1.6cqw; left:calc(var(--i) * 3.6cqw);
+    width:2.8cqw; height:2.8cqw; margin:0; accent-color:var(--accent);
     pointer-events:none;           /* 未checkedは直接押せない（順番どおり消費） */
   }
   .grp .u > input:checked{ pointer-events:auto; cursor:pointer; }  /* ✓は押して解除できる */
   .grp .u > label{
     position:absolute; top:0; left:0;
-    width:6.6cqw; height:6.6cqw; border-radius:50%;
+    width:13cqw; height:13cqw; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    font-size:3.5cqw; user-select:none; cursor:pointer;
+    font-size:7cqw; user-select:none; cursor:pointer;
     background:linear-gradient(158deg,#e0a95c,#a9682a);
     border:.3cqw solid #6b3f16;
     box-shadow:0 .5cqw 1.1cqw rgba(0,0,0,.45);
@@ -143,10 +143,6 @@
       translate(calc(150% + var(--i) * 13%), calc(-6% + var(--i) * 4%))
       rotate(calc(6deg + var(--i) * 5deg)) scale(.5);
     opacity:.3; pointer-events:none;
-  }
-  .grp .caption{
-    position:absolute; bottom:0; left:0; right:0;
-    font-size:1cqw; line-height:1.4; color:var(--muted);
   }
 
   .center{ align-items:center; justify-content:center; text-align:center; }
@@ -159,40 +155,41 @@
   .one{
     display:flex; align-items:center; gap:3cqw;
     background:var(--panel); border:1px solid var(--line);
-    border-radius:1.2cqw; padding:2cqw 2.8cqw; align-self:flex-start;
+    border-radius:1.2cqw; padding:2.4cqw 3.2cqw; align-self:flex-start;
   }
   .one .cookie{
     order:1;
-    width:8.6cqw; height:8.6cqw; border-radius:50%;
+    width:14cqw; height:14cqw; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    font-size:4.6cqw; cursor:pointer; user-select:none;
+    font-size:7.6cqw; cursor:pointer; user-select:none;
     background:linear-gradient(158deg,#e0a95c,#a9682a);
     border:.3cqw solid #6b3f16;
     transition:transform .3s cubic-bezier(.3,1.4,.5,1), filter .3s ease;
   }
-  #one-cb{ order:2; width:2.2cqw; height:2.2cqw; accent-color:var(--accent); cursor:pointer; margin:0; }
+  #one-cb{ order:2; width:3.6cqw; height:3.6cqw; accent-color:var(--accent); cursor:pointer; margin:0; }
   #one-cb:checked + .cookie{ transform:rotate(-12deg) scale(.9); filter:grayscale(.7) brightness(.6); }
-  .one .state{ order:3; font-size:1.6cqw; }
-  .one .state .now{ font-size:2.5cqw; font-weight:800; color:var(--accent2); }
+  .one .state{ order:3; font-size:2.4cqw; }
+  .one .state .now{ font-size:3.8cqw; font-weight:800; color:var(--accent2); }
   .msg-off,.msg-on{ display:none; }
   .one:not(:has(#one-cb:checked)) .msg-off{ display:block; }
   .one:has(#one-cb:checked) .msg-on{ display:block; }
 
   /* ---------- CSSルールブロック ---------- */
   .rule{
-    --rc-sel:#6d5c49; --rc-prop:#6d5c49; --rc-cm:#54432f;
+    --rc-sel:#9c8058; --rc-prop:#7f8a5c; --rc-cm:#5b4a35;
     position:relative;
     background:#0d0805; border:1px solid #2c1e14; border-left:.3cqw solid #2c1e14;
-    border-radius:.55cqw; padding:.34cqw 3.1cqw .34cqw .85cqw;
+    border-radius:.55cqw;
+    padding:.3cqw 3.1cqw .3cqw .85cqw;
     transition:border-color .25s ease, background .25s ease;
   }
   .rule .rtitle{
-    display:block; font-size:1.02cqw; font-weight:800; color:#b8a68d;
-    margin-bottom:.15cqw; transition:color .25s ease;
+    display:block; font-size:1.1cqw; font-weight:800; color:#b8a68d;
+    margin-bottom:.05cqw; transition:color .25s ease;
   }
   .rule pre{
     margin:0; font-family:"SFMono-Regular",Menlo,Consolas,monospace;
-    font-size:.86cqw; line-height:1.45; white-space:pre; overflow-x:auto; color:#6d5c49;
+    font-size:.92cqw; line-height:1.34; white-space:pre; overflow-x:auto; color:#6d5c49;
     transition:color .25s ease;
   }
   .rule pre .cm{ color:var(--rc-cm); transition:color .25s ease; }
@@ -214,10 +211,10 @@
     background:var(--panel2); border:1px solid var(--line); border-radius:1cqw;
     padding:.45cqw 1.5cqw;
   }
-  .balance .lb{ font-size:1.32cqw; color:var(--muted); }
-  .balance .n{ font-size:2.9cqw; font-weight:800; color:var(--accent); line-height:1; }
+  .balance .lb{ font-size:1.45cqw; color:var(--muted); }
+  .balance .n{ font-size:2.95cqw; font-weight:800; color:var(--accent); line-height:1; }
   .balance .n::after{ content:counter(bal); }
-  .balance .unit{ font-size:1.32cqw; }
+  .balance .unit{ font-size:1.45cqw; }
   .buyrow{ display:flex; align-items:center; gap:.8cqw; }
   .buychk{
     width:1.7cqw; height:1.7cqw; margin:0; flex:0 0 auto;
@@ -225,7 +222,7 @@
   }
   #pg-buy:checked{ pointer-events:auto; cursor:pointer; }
   .buy{
-    flex:1; display:block; text-align:center; font-size:1.32cqw; font-weight:800;
+    flex:1; display:block; text-align:center; font-size:1.45cqw; font-weight:800;
     padding:.8cqw 1cqw; border-radius:.7cqw;
     background:#4a4038; color:#8d8175; border:.2cqw solid #5c5148;
     cursor:not-allowed; pointer-events:none; user-select:none;
@@ -464,7 +461,7 @@
     position:absolute; inset:0; z-index:5;
     display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1cqw;
     background:rgba(10,6,3,.86); opacity:0; pointer-events:none;
-    transition:opacity .45s ease;
+    transition:opacity .28s ease;
   }
   .clear16 .t{ font-size:7cqw; font-weight:800; color:#fff; }
   .clear16 .s{ font-size:1.5cqw; color:var(--muted); }
@@ -524,27 +521,27 @@
 
   .pg{
     position:absolute; left:5cqw; right:5cqw; top:15cqw; bottom:5.65cqw;
-    display:none; flex-direction:column; gap:.3cqw;
+    display:none; flex-direction:column; gap:.1cqw;
   }
   #st4:checked ~ .stage .pg, #st5:checked ~ .stage .pg, #st6:checked ~ .stage .pg{ display:flex; }
   .prow{
-    display:grid; grid-template-columns:1fr 1fr; gap:1.1cqw; align-items:stretch;
-    transition:opacity .45s ease, transform .45s ease;
+    display:grid; grid-template-columns:.85fr 1.15fr; gap:1.1cqw; align-items:stretch;
+    transition:opacity .28s ease, transform .28s ease;
   }
   .prow .cell{
     background:var(--panel); border:1px solid var(--line); border-radius:.9cqw;
-    padding:.4cqw .9cqw; display:flex; flex-direction:column; gap:.25cqw; min-width:0;
+    padding:.35cqw .9cqw; display:flex; flex-direction:column; gap:.22cqw; min-width:0;
   }
   .prow .rules{ display:flex; flex-direction:column; gap:.32cqw; justify-content:center; min-width:0; }
-  .prow h3{ margin:0; font-size:1.1cqw; color:var(--accent); }
-  .caption2{ font-size:1cqw; color:var(--muted); }
+  .prow h3{ margin:0; font-size:1.2cqw; color:var(--accent); }
+  .caption2{ font-size:1.1cqw; color:var(--muted); }
   .pg .later{ opacity:0; transform:translateY(1.1cqw); pointer-events:none; }
   #st5:checked ~ .stage .pg .p5, #st6:checked ~ .stage .pg .p5,
   #st6:checked ~ .stage .pg .p6{ opacity:1; transform:none; pointer-events:auto; }
   .prow.brow{ order:-1; }
   .prow .grp{ height:6cqw; }
-  .prow .grp .u > label{ width:3.6cqw; height:3.6cqw; font-size:1.9cqw; }
-  .prow .grp .u > input{ bottom:1.3cqw; left:calc(var(--i) * 1.45cqw); width:1.1cqw; height:1.1cqw; }
+  .prow .grp .u > label{ width:4.3cqw; height:4.3cqw; font-size:2.3cqw; }
+  .prow .grp .u > input{ bottom:.5cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
 
 </style>
 </head>
@@ -583,7 +580,7 @@
     <section class="slide sl2">
       <span class="tag">STEP 1</span>
       <h2>checkbox 1個 ＝ クリック1回分の記憶</h2>
-      <p>左の 🍪 が <span class="kw">&lt;label&gt;</span>、右が <span class="kw">&lt;input type="checkbox"&gt;</span> 本体。<b>同じ1個の要素</b>です。</p>
+      <p class="big">左の 🍪 が <span class="kw">&lt;label&gt;</span>、右が <span class="kw">&lt;input type="checkbox"&gt;</span> 本体。<b>同じ1個の要素</b>です。</p>
       <div class="one">
         <input type="checkbox" id="one-cb">
         <label class="cookie" for="one-cb">🍪</label>
@@ -592,7 +589,7 @@
           <div class="msg-on"><span class="now">checked</span><br>「1回押した」だけが残る</div>
         </div>
       </div>
-      <p class="sub">このゲームに変数はありません。あるのはこの2状態だけ。</p>
+      <p class="big sub">このゲームに変数はありません。あるのはこの2状態だけ。</p>
       <div class="nav">
         <label class="btn" for="st1">◀ 前へ</label>
         <div class="track"><i style="width:8%"></i></div>
@@ -605,12 +602,11 @@
     <section class="slide sl3">
       <span class="tag">STEP 2</span>
       <h2>同じ場所に重ねると「連続クリック」になる</h2>
-      <p>本物は100個。<b>手前の1個しか押せず</b>、押すと脇へ飛んで次が出てきます。</p>
-      <div class="grp" style="width:40cqw;">
+      <p class="big">本物は100個。<b>手前の1個しか押せず</b>、押すと脇へ飛んで次が出てきます。</p>
+      <div class="grp" style="width:70cqw;">
         <span class="u" style="--i:5"><input type="checkbox" id="s3_1"><label for="s3_1">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="s3_2"><label for="s3_2">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="s3_3"><label for="s3_3">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="s3_4"><label for="s3_4">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="s3_5"><label for="s3_5">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="s3_6"><label for="s3_6">🍪</label></span>
-        <div class="caption">↑ 本物の checkbox 6個。🍪で左から ✓、✓を押せば解除できます。</div>
       </div>
-      <p class="sub">z-index なし。「後に書いた要素が手前」という既定の規則だけです。</p>
+      <p class="big sub">z-index なし。「後に書いた要素が手前」という既定の規則だけです。</p>
       <div class="nav">
         <label class="btn" for="st2">◀ 前へ</label>
         <div class="track"><i style="width:15%"></i></div>
@@ -635,7 +631,7 @@
     <section class="slide sl5">
       <span class="tag">STEP 4</span>
       <h2>ショップが増えた。購入もただの checkbox</h2>
-      <p>5枚たまると「買えるルール」が有効に。買うと減算ルールが有効になります。</p>
+      <p>買えるかどうかは、その checkbox を<b>visibility で見せるか隠すか</b>だけで決まります。</p>
       <div class="nav">
         <label class="btn" for="st4">◀ 前へ</label>
         <div class="track"><i style="width:31%"></i></div>
@@ -756,28 +752,28 @@
           <div class="chips"><span class="chip">1枚 × 10回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
      <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(10):checked)</span>  <span class="cmt">/* ← 1枚の群を10回 */</span>
-  .item2 .purchase { <span class="prop">--purchase-background</span>: skyblue; }</pre>
+  .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
         <div class="o2">
           <div class="chips"><span class="chip">1枚 × 8回</span><span class="chip eq">＋</span><span class="chip">2枚 × 1回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
      <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(8):checked)</span>  <span class="cmt">/* ← 1枚の群を8回 */</span>
      <span class="has">:has(&gt; .click-group.rate-2 &gt; input:nth-last-child(1):checked)</span>  <span class="cmt">/* ← 2枚の群を1回 */</span>
-  .item2 .purchase { <span class="prop">--purchase-background</span>: skyblue; }</pre>
+  .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
         <div class="o3">
           <div class="chips"><span class="chip">1枚 × 6回</span><span class="chip eq">＋</span><span class="chip">2枚 × 2回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
      <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(6):checked)</span>  <span class="cmt">/* ← 1枚の群を6回 */</span>
      <span class="has">:has(&gt; .click-group.rate-2 &gt; input:nth-last-child(2):checked)</span>  <span class="cmt">/* ← 2枚の群を2回 */</span>
-  .item2 .purchase { <span class="prop">--purchase-background</span>: skyblue; }</pre>
+  .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
         <div class="o4">
           <div class="chips"><span class="chip">1枚 × 2回</span><span class="chip eq">＋</span><span class="chip">2枚 × 4回</span><span class="chip eq">＝</span><span class="chip total">10枚 → item2（10枚）が買える</span></div>
           <pre class="code sm"><span class="sel">#main</span><span class="has">:has(#item1:checked)</span><span class="has">:has(#item2:not(:checked))</span>
      <span class="has">:has(&gt; .click-group.rate-1 &gt; input:nth-last-child(2):checked)</span>  <span class="cmt">/* ← 1枚の群を2回 */</span>
      <span class="has">:has(&gt; .click-group.rate-2 &gt; input:nth-last-child(4):checked)</span>  <span class="cmt">/* ← 2枚の群を4回 */</span>
-  .item2 .purchase { <span class="prop">--purchase-background</span>: skyblue; }</pre>
+  .item2 .purchase &gt; input { <span class="prop">visibility</span>: visible; }</pre>
         </div>
       </div>
       <p class="sub"><span class="kw">:nth-last-child(N):checked</span> ＝「N回<b>以上</b>押した」。追加で押しても成立したまま ＝ 一度買えたら買えるまま。</p>
@@ -867,7 +863,7 @@
 
     <section class="slide sl12">
       <span class="tag">STEP 8</span>
-      <h2>この量は手で書けない。だから Sass で全列挙する</h2>
+      <h2>セレクタは Sass の再帰で全列挙する</h2>
       <div class="sassrow">
         <div>
           <h3>書いたもの：再帰mixin（抜粋）</h3>
@@ -1128,15 +1124,15 @@
 
     <div class="pg">
       <div class="prow">
-        <div class="cell"><h3>rate-1 の群（1回 ＝ +1枚）</h3><div class="grp g1"><span class="u" style="--i:9"><input type="checkbox" id="pgA1"><label for="pgA1">🍪</label></span><span class="u" style="--i:8"><input type="checkbox" id="pgA2"><label for="pgA2">🍪</label></span><span class="u" style="--i:7"><input type="checkbox" id="pgA3"><label for="pgA3">🍪</label></span><span class="u" style="--i:6"><input type="checkbox" id="pgA4"><label for="pgA4">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="pgA5"><label for="pgA5">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="pgA6"><label for="pgA6">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="pgA7"><label for="pgA7">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgA8"><label for="pgA8">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgA9"><label for="pgA9">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgA10"><label for="pgA10">🍪</label></span><div class="caption">↑ 本物の checkbox 10個。🍪で左から ✓、✓を押せば解除。</div></div></div>
+        <div class="cell"><h3>rate-1 の群（1回 ＝ +1枚）</h3><div class="grp g1"><span class="u" style="--i:9"><input type="checkbox" id="pgA1"><label for="pgA1">🍪</label></span><span class="u" style="--i:8"><input type="checkbox" id="pgA2"><label for="pgA2">🍪</label></span><span class="u" style="--i:7"><input type="checkbox" id="pgA3"><label for="pgA3">🍪</label></span><span class="u" style="--i:6"><input type="checkbox" id="pgA4"><label for="pgA4">🍪</label></span><span class="u" style="--i:5"><input type="checkbox" id="pgA5"><label for="pgA5">🍪</label></span><span class="u" style="--i:4"><input type="checkbox" id="pgA6"><label for="pgA6">🍪</label></span><span class="u" style="--i:3"><input type="checkbox" id="pgA7"><label for="pgA7">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgA8"><label for="pgA8">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgA9"><label for="pgA9">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgA10"><label for="pgA10">🍪</label></span></div></div>
         <div class="rules"><div class="rule rl-c1"><span class="rtitle">rate-1群で押された1個ごとに +1</span><span class="ok">有効</span><pre><span class="sl">.click-group.rate-1 &gt; input:checked</span>  <span class="cm">/* 押されたinput */</span>
 { <span class="pr">counter-increment</span>: cookies 1; }</pre></div></div>
       </div>
       <div class="prow later p5">
-        <div class="cell"><h3>ショップ ／ item1・5枚</h3><div class="buyrow"><input type="checkbox" id="pg-buy" class="buychk"><label class="buy" for="pg-buy"><span class="t-yet">5枚たまると押せます</span><span class="t-ok">item1 を買う（−5枚）</span><span class="t-done">購入済み ✓</span></label></div><div class="caption2">← 購入の実体（#item1）</div></div>
-        <div class="rules"><div class="rule rl-buy"><span class="rtitle">5回以上押していて item1 未購入なら、買える見た目に</span><span class="ok">有効</span><pre><span class="sl">#main:has(&gt; .rate-1 &gt; input:nth-last-child(5):checked)</span>  <span class="cm">/* 5回以上押した */</span>
-  <span class="sl">:not(:has(#item1:checked)) .item1 .purchase</span>
-  { <span class="pr">--purchase-background</span>: skyblue; }</pre></div><div class="rule rl-minus"><span class="rtitle">item1 を買ったら −5</span><span class="ok">有効</span><pre><span class="sl">#item1:checked</span> { <span class="pr">counter-increment</span>: cookies -5; }  <span class="cm">/* 購入のcheckbox */</span></pre></div></div>
+        <div class="cell"><h3>ショップ ／ item1・5枚</h3><div class="buyrow"><input type="checkbox" id="pg-buy" class="buychk"><label class="buy" for="pg-buy"><span class="t-yet">5枚たまると押せます</span><span class="t-ok">item1 を買う（−5枚）</span><span class="t-done">購入済み ✓</span></label></div><div class="caption2">← 購入の実体（#item1）。本物はボタンに重ねてある</div></div>
+        <div class="rules"><div class="rule rl-buy"><span class="rtitle">購入の checkbox は隠してある。5回以上押していて item1 未購入のときだけ出す</span><span class="ok">有効</span><pre><span class="sl">.item1 .purchase &gt; input</span> { <span class="pr">visibility</span>: hidden; }  <span class="cm">/* ふだんは押せない */</span>
+<span class="sl">#main:has(&gt; .rate-1 &gt; input:nth-last-child(5):checked)</span>  <span class="cm">/* 5回以上押した */</span>
+  <span class="sl">:not(:has(#item1:checked)) .item1 .purchase &gt; input</span> { <span class="pr">visibility</span>: visible; }</pre></div><div class="rule rl-minus"><span class="rtitle">item1 を買ったら −5</span><span class="ok">有効</span><pre><span class="sl">#item1:checked</span> { <span class="pr">counter-increment</span>: cookies -5; }  <span class="cm">/* 購入のcheckbox */</span></pre></div></div>
       </div>
       <div class="prow later p6">
         <div class="cell"><h3>rate-2 の群（1回 ＝ +2枚）</h3><div class="grp g2"><span class="u" style="--i:3"><input type="checkbox" id="pgB1"><label for="pgB1">🍪</label></span><span class="u" style="--i:2"><input type="checkbox" id="pgB2"><label for="pgB2">🍪</label></span><span class="u" style="--i:1"><input type="checkbox" id="pgB3"><label for="pgB3">🍪</label></span><span class="u" style="--i:0"><input type="checkbox" id="pgB4"><label for="pgB4">🍪</label></span></div></div>
