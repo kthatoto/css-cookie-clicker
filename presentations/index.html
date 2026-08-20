@@ -299,7 +299,7 @@
   }
   .supn .grp{ width:31cqw; height:13cqw; }
   .supn .grp .u > label{ width:5cqw; height:5cqw; font-size:2.6cqw; }
-  .supn .grp .u > input{ bottom:5.5cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
+  .supn .grp .u > input{ bottom:5.1cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
   /* 判定対象（DOMの後ろから3番目 ＝ 画面では左から3番目）を常時マークする */
   .supn #sn4{
     outline:.2cqw dashed var(--accent2); outline-offset:.16cqw; border-radius:.2cqw;
@@ -540,8 +540,11 @@
   #st6:checked ~ .stage .pg .p6{ opacity:1; transform:none; pointer-events:auto; }
   .prow.brow{ order:-1; }
   .prow .grp{ height:6cqw; }
-  .prow .grp .u > label{ width:4.3cqw; height:4.3cqw; font-size:2.3cqw; }
-  .prow .grp .u > input{ bottom:.5cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
+  .prow .grp .u > label{
+    width:3.6cqw; height:3.6cqw; font-size:1.95cqw;
+    box-shadow:0 .25cqw .5cqw rgba(0,0,0,.45);
+  }
+  .prow .grp .u > input{ bottom:.3cqw; left:calc(var(--i) * 1.75cqw); width:1.35cqw; height:1.35cqw; }
 
 </style>
 </head>
@@ -568,7 +571,7 @@
     <section class="slide sl1 center">
       <div class="hero">🍪</div>
       <h1>CSS Cookie Clicker を<br>1プレイ分、積み上げて読む</h1>
-      <p class="big sub">押して動かしながら 仕掛けごと読んでいく<br>CSSだけのクッキークリッカー</p>
+      <p class="big sub">押して動かしながら 仕掛けごと読んでいく話</p>
       <div class="nav">
         <div class="track"><i style="width:0%"></i></div>
         <span class="pos">1 / 14</span>
