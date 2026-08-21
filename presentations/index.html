@@ -535,9 +535,11 @@
   }
   .dots i.on{ background:var(--accent); border-color:var(--accent); }
   .dots i.gone{ background:#4a3520; border-color:#4a3520; }
-  .dots.names{ gap:.32cqw; }
-  .dots.names b{
-    width:1.05cqw; flex:0 0 auto; text-align:center;
+  /* 購入は checkbox なので、そのまま checkbox で描く */
+  .cbs{ display:flex; gap:.55cqw; align-items:center; }
+  .cbs input{ width:1.45cqw; height:1.45cqw; margin:0; flex:0 0 auto; pointer-events:none; }
+  .cbs.names b{
+    width:1.45cqw; flex:0 0 auto; text-align:center;
     font-size:.92cqw; font-weight:800; color:#7d6b58;
   }
   .fxrow.lbl .k{ font-size:.92cqw; color:#7d6b58; }
@@ -955,16 +957,16 @@
       <div class="mulrow">
         <div class="card">
           <h3>群の数</h3>
-          <div class="fx"><div class="fxrow"><span class="k">item1</span><span class="dots "><i class="on"></i><i></i></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">item2</span><span class="dots "><i class="on"></i><i></i></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">item3</span><span class="dots "><i class="on"></i><i></i></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">item4</span><span class="dots "><i class="on"></i><i></i></span><span class="v">2通り</span></div></div>
+          <div class="fx"><div class="fxrow"><span class="k">item1</span><span class="cbs "><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">item2</span><span class="cbs "><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">item3</span><span class="cbs "><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">item4</span><span class="cbs "><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">2通り</span></div></div>
           <div class="eq">2 × 2 × 2 × 2 = 2<sup>n</sup> = 16</div>
           <div class="note">アイテムごとに<b>買った / 買っていない</b>の2通り。増分がばらばらだと、その組み合わせぶんだけ別の群が要る</div>
         </div>
         <span class="op">×</span>
         <div class="card">
           <h3>買う順番</h3>
-          <div class="fx"><div class="fxrow lbl"><span class="k">アイテム</span><span class="dots names"><b>1</b><b>2</b><b>3</b><b>4</b></span><span class="v"></span></div><div class="fxrow"><span class="k">1番目に買う</span><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">4通り</span></div><div class="fxrow"><span class="k">2番目に買う</span><span class="dots"><i class="gone"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">3通り</span></div><div class="fxrow"><span class="k">3番目に買う</span><span class="dots"><i class="gone"></i><i class="gone"></i><i class="on"></i><i class="on"></i></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">4番目に買う</span><span class="dots"><i class="gone"></i><i class="gone"></i><i class="gone"></i><i class="on"></i></span><span class="v">1通り</span></div></div>
+          <div class="fx"><div class="fxrow lbl"><span class="k">アイテム</span><span class="cbs names"><b>1</b><b>2</b><b>3</b><b>4</b></span><span class="v"></span></div><div class="fxrow"><span class="k">1番目に買う</span><span class="cbs"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">4通り</span></div><div class="fxrow"><span class="k">2番目に買う</span><span class="cbs"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">3通り</span></div><div class="fxrow"><span class="k">3番目に買う</span><span class="cbs"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" tabindex="-1" aria-hidden="true"></span><span class="v">2通り</span></div><div class="fxrow"><span class="k">4番目に買う</span><span class="cbs"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" checked tabindex="-1" aria-hidden="true"><input type="checkbox" checked tabindex="-1" aria-hidden="true"></span><span class="v">1通り</span></div></div>
           <div class="eq">4 × 3 × 2 × 1 = 4! = 24</div>
-          <div class="note">薄い玉は購入済みで、もう選べない。順番が違えば<b>通ってきた群も違う</b>ので、同じ状態でも道ごとに別のセレクタが要る</div>
+          <div class="note">買うたびにチェックが増える。<b>まだ買っていないものから1つ選ぶ</b>ので、選べる数は 4→3→2→1 と減る。順番が違えば<b>通ってきた群も違う</b>ので、同じ状態でも道ごとに別のセレクタが要る</div>
         </div>
         <span class="op">×</span>
         <div class="card">
@@ -976,8 +978,8 @@
       </div>
       <p class="lead">効くのは3つ目です。増分はそのままに<b>価格だけ10倍</b>にすると、必要枚数 R が伸びて配り方が増えます。</p>
       <div class="bars">
-        <div class="row now"><span class="lb">価格 2,5,50,500</span><span class="tr"><i style="--w:22%"></i></span><span class="n">8,888</span></div>
-        <div class="row"><span class="lb">価格 5,50,500,5000</span><span class="tr"><i style="--w:100%"></i></span><span class="n">40,797</span></div>
+        <div class="row now"><span class="lb">価格 2/5/50/500</span><span class="tr"><i style="--w:22%"></i></span><span class="n">8,888</span></div>
+        <div class="row"><span class="lb">価格 5/50/500/5000</span><span class="tr"><i style="--w:100%"></i></span><span class="n">40,797</span></div>
       </div>
       <div class="nav">
         <label class="btn" for="st12">◀ 前へ</label>
