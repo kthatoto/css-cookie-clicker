@@ -528,13 +528,6 @@
   .fxrow{ display:grid; grid-template-columns:6.2cqw 1fr 4.3cqw; gap:.6cqw; align-items:center; }
   .fxrow .k{ font-size:1.15cqw; color:var(--muted); text-align:right; white-space:nowrap; }
   .fxrow .v{ font-size:1.15cqw; color:#ffd9a0; font-weight:800; text-align:right; white-space:nowrap; }
-  .dots{ display:flex; gap:.32cqw; flex-wrap:wrap; align-items:center; }
-  .dots i{
-    width:1.05cqw; height:1.05cqw; border-radius:50%; flex:0 0 auto;
-    background:#2a1e15; border:1px solid var(--line);
-  }
-  .dots i.on{ background:var(--accent); border-color:var(--accent); }
-  .dots i.gone{ background:#4a3520; border-color:#4a3520; }
   /* 購入は checkbox なので、そのまま checkbox で描く */
   .cbs{ display:flex; gap:.55cqw; align-items:center; }
   .cbs input{ width:1.45cqw; height:1.45cqw; margin:0; flex:0 0 auto; pointer-events:none; }
@@ -543,8 +536,17 @@
     font-size:.92cqw; font-weight:800; color:#7d6b58;
   }
   .fxrow.lbl .k{ font-size:.92cqw; color:#7d6b58; }
-  .dots.sm{ gap:.2cqw; }
-  .dots.sm i{ width:.62cqw; height:.62cqw; }
+  /* 同じ枚数を、増分の違う群でどう積んだか */
+  .w3b{ display:flex; flex-direction:column; gap:.5cqw; flex:1; justify-content:center; }
+  .w3brow{ display:flex; align-items:center; gap:.6cqw; }
+  .blk{ display:flex; gap:.18cqw; flex:1; }
+  .blk i{
+    height:1.5cqw; border-radius:.2cqw; display:flex; align-items:center; justify-content:center;
+    font-size:.82cqw; font-weight:800; font-style:normal; color:#241708;
+  }
+  .blk .b1{ width:1.5cqw; background:var(--accent); }
+  .blk .b2{ width:3.18cqw; background:var(--accent2); }
+  .w3brow .tot{ font-size:1cqw; color:var(--muted); width:3.4cqw; text-align:right; }
   .lead{ font-size:1.62cqw; line-height:1.5; color:var(--text); margin:0; }
   .bars{ display:flex; flex-direction:column; gap:.6cqw; }
   .bars .row{ display:grid; grid-template-columns:18cqw 1fr 9cqw; gap:1.2cqw; align-items:center; }
@@ -971,12 +973,12 @@
         <span class="op">×</span>
         <div class="card">
           <h3>押し方の配り方</h3>
-          <div class="fx"><div class="fxrow"><span class="k">R = 5枚</span><span class="dots sm"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">4通り</span></div><div class="fxrow"><span class="k">R = 50枚</span><span class="dots sm"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="v">26通り</span></div></div>
-          <div class="eq">必要枚数 R ÷ 増分 r</div>
-          <div class="note">必要な R 枚を、増分の違う群へ何回ずつ配るか。<b>R が大きいほど増える</b></div>
+          <div class="w3b"><div class="w3brow"><span class="blk"><i class="b1">1</i><i class="b1">1</i><i class="b1">1</i><i class="b1">1</i><i class="b1">1</i></span><span class="tot">5枚</span></div><div class="w3brow"><span class="blk"><i class="b1">1</i><i class="b1">1</i><i class="b1">1</i><i class="b2">2</i></span><span class="tot">5枚</span></div><div class="w3brow"><span class="blk"><i class="b1">1</i><i class="b2">2</i><i class="b2">2</i></span><span class="tot">5枚</span></div><div class="w3brow"><span class="blk"><i class="b2">2</i><i class="b2">2</i><i class="b2">2</i></span><span class="tot">6枚</span></div></div>
+          <div class="eq">5枚に届く積み方 ＝ 4通り</div>
+          <div class="note"><b>積み方が違えば別のセレクタ</b>が要る。ぴったりにならない積み方（6枚）も1通り。必要枚数が50枚なら <b>26通り</b></div>
         </div>
       </div>
-      <p class="lead">効くのは3つ目です。増分はそのままに<b>価格だけ10倍</b>にすると、必要枚数 R が伸びて配り方が増えます。</p>
+      <p class="lead">効くのは3つ目です。増分はそのままに<b>価格だけ10倍</b>にすると、必要枚数が伸びて配り方が増えます。</p>
       <div class="bars">
         <div class="row now"><span class="lb">価格 2/5/50/500</span><span class="tr"><i style="--w:22%"></i></span><span class="n">8,888</span></div>
         <div class="row"><span class="lb">価格 5/50/500/5000</span><span class="tr"><i style="--w:100%"></i></span><span class="n">40,797</span></div>
