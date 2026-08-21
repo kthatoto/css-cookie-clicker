@@ -6,10 +6,10 @@ $click-limit: 100;
 
 // (名前, 価格, 1クリックあたりの増分)
 $items: (
-  ("Special Cookie 1", 5, 1),
-  ("Special Cookie 2", 50, 10),
-  ("Special Cookie 3", 500, 100),
-  ("Special Cookie 4", 5000, 1000)
+  ("Special Cookie 1", 2, 1),
+  ("Special Cookie 2", 5, 10),
+  ("Special Cookie 3", 50, 100),
+  ("Special Cookie 4", 500, 1000)
 );
 
 body {
@@ -28,20 +28,6 @@ h1 {
 
 #result::after {
   content: "クッキー：" counter(cookies) "枚";
-}
-
-#game-clear {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100vh;
-  line-height: 100vh;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-size: 60px;
-  font-weight: bold;
-  display: none;
 }
 
 #main {
@@ -318,7 +304,6 @@ h1 {
 }
 
 @mixin shop-items {
-  $game-clear-condition: "";
   @for $index from 1 through length($items) {
     #shop > #items > .item#{$index} > span::after {
       content: item-name($index) + "：" + item-price($index) + "枚（クリック +"
@@ -335,11 +320,6 @@ h1 {
         content: "済み";
       }
     }
-    $game-clear-condition: $game-clear-condition + ":has(#item" + $index + ":checked)";
-  }
-
-  #main#{$game-clear-condition} > #game-clear {
-    display: block;
   }
 }
 
